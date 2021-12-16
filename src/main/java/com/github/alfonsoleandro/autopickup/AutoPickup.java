@@ -223,12 +223,8 @@ public class AutoPickup extends ReloaderPlugin {
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new JoinLeaveEvents(this), this);
         pm.registerEvents(new GUIClickListener(this), this);
-        if(Bukkit.getPluginManager().isPluginEnabled("BetterBackpacks")) {
-            Bukkit.broadcastMessage("bbp entcontrao");
+        if(Bukkit.getPluginManager().isPluginEnabled("BetterBackpacks"))
             pm.registerEvents(new BetterBackpacksListener(this), this);
-        }else{
-            Bukkit.broadcastMessage("bbp NOOOO entcontrao");
-        }
 
         AutoPickupEventsListener listeners = new AutoPickupEventsListener(this, this.serverVersionDiscriminant);
         String[] priorities = new String[]{"LOWEST", "LOW", "NORMAL", "HIGH", "HIGHEST"};

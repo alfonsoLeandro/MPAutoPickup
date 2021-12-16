@@ -1,6 +1,7 @@
 package com.github.alfonsoleandro.autopickup.utils;
 
 import com.github.alfonsoleandro.autopickup.AutoPickup;
+import com.github.alfonsoleandro.mputils.itemstacks.MPItemStacks;
 import com.github.alfonsoleandro.mputils.reloadable.Reloadable;
 import com.github.alfonsoleandro.mputils.time.TimeUtils;
 import org.bukkit.Bukkit;
@@ -8,6 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
+import org.bukkit.inventory.ItemStack;
 import org.mariuszgromada.math.mxparser.Expression;
 
 import java.util.*;
@@ -29,6 +31,22 @@ public class Settings extends Reloadable {
     private int ticksBeforeAlert;
 
     private String fortuneAmount;
+
+    private ItemStack aPBlockEnabled;
+    private ItemStack aPBlockDisabled;
+    private ItemStack aPBlockNoPermission;
+    private ItemStack aPMobEnabled;
+    private ItemStack aPMobDisabled;
+    private ItemStack aPMobNoPermission;
+    private ItemStack aPExpEnabled;
+    private ItemStack aPExpDisabled;
+    private ItemStack aPExpNoPermission;
+    private ItemStack aSBlockEnabled;
+    private ItemStack aSBlockDisabled;
+    private ItemStack aSBlockNoPermission;
+    private ItemStack aSMobEnabled;
+    private ItemStack aSMobDisabled;
+    private ItemStack aSMobNoPermission;
 
     private Set<Material> fortuneMaterials;
     private Set<Material> itemBlackList;
@@ -66,6 +84,27 @@ public class Settings extends Reloadable {
 
 
         this.fortuneAmount = config.getString("config.fortune.amount");
+
+
+        this.aPBlockEnabled = getConfigGUIItem("auto pickup block drops.enabled");
+        this.aPBlockDisabled = getConfigGUIItem("auto pickup block drops.disabled");
+        this.aPBlockNoPermission = getConfigGUIItem("auto pickup block drops.no permission");
+
+        this.aPMobEnabled = getConfigGUIItem("auto pickup mob drops.enabled");
+        this.aPMobDisabled = getConfigGUIItem("auto pickup mob drops.disabled");
+        this.aPMobNoPermission = getConfigGUIItem("auto pickup mob drops.no permission");
+
+        this.aPExpEnabled = getConfigGUIItem("auto pickup exp.enabled");
+        this.aPExpDisabled = getConfigGUIItem("auto pickup exp.disabled");
+        this.aPExpNoPermission = getConfigGUIItem("auto pickup exp.no permission");
+
+        this.aSBlockEnabled = getConfigGUIItem("auto smelt blocks.enabled");
+        this.aSBlockDisabled = getConfigGUIItem("auto smelt blocks.disabled");
+        this.aSBlockNoPermission = getConfigGUIItem("auto smelt blocks.no permission");
+
+        this.aSMobEnabled = getConfigGUIItem("auto smelt mobs.enabled");
+        this.aSMobDisabled = getConfigGUIItem("auto smelt mobs.disabled");
+        this.aSMobNoPermission = getConfigGUIItem("auto smelt mobs.no permission");
 
         this.fortuneMaterials = new HashSet<>();
         for(String material : config.getStringList("config.fortune.items")){
@@ -139,6 +178,16 @@ public class Settings extends Reloadable {
 
     }
 
+    private ItemStack getConfigGUIItem(String path){
+        FileConfiguration config = this.plugin.getConfigYaml().getAccess();
+        return MPItemStacks.newItemStack(
+                Material.valueOf(config.getString("config.GUI."+path+".item")),
+                1,
+                config.getString("config.GUI."+path+".name"),
+                config.getStringList("config.GUI."+path+".lore")
+        );
+    }
+
     //Getters
 
     public boolean isUseVanillaEnchantments() {
@@ -182,6 +231,65 @@ public class Settings extends Reloadable {
         return (int) (this.r.nextInt((int) (v2-v1+1))+v1);
     }
 
+    public ItemStack getaPBlockEnabled() {
+        return this.aPBlockEnabled;
+    }
+
+    public ItemStack getaPBlockDisabled() {
+        return this.aPBlockDisabled;
+    }
+
+    public ItemStack getaPBlockNoPermission() {
+        return this.aPBlockNoPermission;
+    }
+
+    public ItemStack getaPMobEnabled() {
+        return this.aPMobEnabled;
+    }
+
+    public ItemStack getaPMobDisabled() {
+        return this.aPMobDisabled;
+    }
+
+    public ItemStack getaPMobNoPermission() {
+        return this.aPMobNoPermission;
+    }
+
+    public ItemStack getaPExpEnabled() {
+        return this.aPExpEnabled;
+    }
+
+    public ItemStack getaPExpDisabled() {
+        return this.aPExpDisabled;
+    }
+
+    public ItemStack getaPExpNoPermission() {
+        return this.aPExpNoPermission;
+    }
+
+    public ItemStack getaSBlockEnabled() {
+        return this.aSBlockEnabled;
+    }
+
+    public ItemStack getaSBlockDisabled() {
+        return this.aSBlockDisabled;
+    }
+
+    public ItemStack getaSBlockNoPermission() {
+        return this.aSBlockNoPermission;
+    }
+
+    public ItemStack getaSMobEnabled() {
+        return this.aSMobEnabled;
+    }
+
+    public ItemStack getaSMobDisabled() {
+        return this.aSMobDisabled;
+    }
+
+    public ItemStack getaSMobNoPermission() {
+        return this.aSMobNoPermission;
+    }
 
     public SoundSettings getSound(AutoPickupSounds sound){
         return this.sounds.get(sound);

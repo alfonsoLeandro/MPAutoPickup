@@ -3,11 +3,10 @@ package com.github.alfonsoleandro.autopickup.commands;
 import com.github.alfonsoleandro.autopickup.AutoPickup;
 import com.github.alfonsoleandro.autopickup.managers.AutoPickupSettings;
 import com.github.alfonsoleandro.autopickup.utils.Message;
+import com.github.alfonsoleandro.autopickup.utils.Settings;
 import com.github.alfonsoleandro.mputils.guis.SimpleGUI;
-import com.github.alfonsoleandro.mputils.itemstacks.MPItemStacks;
 import com.github.alfonsoleandro.mputils.managers.MessageSender;
 import com.github.alfonsoleandro.mputils.string.StringUtils;
-import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -21,10 +20,12 @@ public class MainCommand implements CommandExecutor {
 
     private final AutoPickup plugin;
     private final MessageSender<Message> messageSender;
+    private final Settings settings;
 
     public MainCommand(AutoPickup plugin){
         this.plugin = plugin;
         this.messageSender = plugin.getMessageSender();
+        this.settings = plugin.getSettings();
     }
 
 
@@ -94,55 +95,54 @@ public class MainCommand implements CommandExecutor {
         ItemStack smeltBlock;
         ItemStack smeltMob;
 
-        //TODO: load gui items in settings
         if(player.hasPermission("autoPickup.autoPickup.block")){
             if(settings.autoPickupBlocksEnabled()){
-                block = getConfigGUIItem("auto pickup block drops.enabled");
+                block = this.settings.getaPBlockEnabled();
             }else{
-                block = getConfigGUIItem("auto pickup block drops.disabled");
+                block = this.settings.getaPBlockDisabled();
             }
         }else{
-            block = getConfigGUIItem("auto pickup block drops.no permission");
+            block = this.settings.getaPBlockNoPermission();
         }
 
         if(player.hasPermission("autoPickup.autoPickup.mob")){
             if(settings.autoPickupMobDropsEnabled()){
-                mob = getConfigGUIItem("auto pickup mob drops.enabled");
+                mob = this.settings.getaPMobEnabled();
             }else{
-                mob = getConfigGUIItem("auto pickup mob drops.disabled");
+                mob = this.settings.getaPMobDisabled();
             }
         }else{
-            mob = getConfigGUIItem("auto pickup mob drops.no permission");
+            mob = this.settings.getaPMobNoPermission();
         }
 
         if(player.hasPermission("autoPickup.autoPickup.exp")){
             if(settings.autoPickupExpEnabled()){
-                exp = getConfigGUIItem("auto pickup exp.enabled");
+                exp = this.settings.getaPExpEnabled();
             }else{
-                exp = getConfigGUIItem("auto pickup exp.disabled");
+                exp = this.settings.getaPExpDisabled();
             }
         }else{
-            exp = getConfigGUIItem("auto pickup exp.no permission");
+            exp = this.settings.getaPExpNoPermission();
         }
 
         if(player.hasPermission("autoPickup.autoSmelt.blocks")){
             if(settings.autoSmeltBlocksEnabled()){
-                smeltBlock = getConfigGUIItem("auto smelt blocks.enabled");
+                smeltBlock = this.settings.getaSBlockEnabled();
             }else{
-                smeltBlock = getConfigGUIItem("auto smelt blocks.disabled");
+                smeltBlock = this.settings.getaSBlockDisabled();
             }
         }else{
-            smeltBlock = getConfigGUIItem("auto smelt blocks.no permission");
+            smeltBlock = this.settings.getaSBlockNoPermission();
         }
 
         if(player.hasPermission("autoPickup.autoSmelt.mobs")){
             if(settings.autoSmeltMobEnabled()){
-                smeltMob = getConfigGUIItem("auto smelt mobs.enabled");
+                smeltMob = this.settings.getaSMobEnabled();
             }else{
-                smeltMob = getConfigGUIItem("auto smelt mobs.disabled");
+                smeltMob = this.settings.getaSMobDisabled();
             }
         }else{
-            smeltMob = getConfigGUIItem("auto smelt mobs.no permission");
+            smeltMob = this.settings.getaSMobNoPermission();
         }
 
 
@@ -155,17 +155,6 @@ public class MainCommand implements CommandExecutor {
 
         gui.openGUI(player);
 
-    }
-
-
-    private ItemStack getConfigGUIItem(String path){
-        FileConfiguration config = this.plugin.getConfigYaml().getAccess();
-        return MPItemStacks.newItemStack(
-                Material.valueOf(config.getString("config.GUI."+path+".item")),
-                1,
-                config.getString("config.GUI."+path+".name"),
-                config.getStringList("config.GUI."+path+".lore")
-        );
     }
 
 
