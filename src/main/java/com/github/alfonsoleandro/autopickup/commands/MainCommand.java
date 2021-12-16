@@ -2,9 +2,10 @@ package com.github.alfonsoleandro.autopickup.commands;
 
 import com.github.alfonsoleandro.autopickup.AutoPickup;
 import com.github.alfonsoleandro.autopickup.managers.AutoPickupSettings;
+import com.github.alfonsoleandro.autopickup.utils.Message;
 import com.github.alfonsoleandro.mputils.guis.SimpleGUI;
 import com.github.alfonsoleandro.mputils.itemstacks.MPItemStacks;
-import com.github.alfonsoleandro.mputils.reloadable.Reloadable;
+import com.github.alfonsoleandro.mputils.managers.MessageSender;
 import com.github.alfonsoleandro.mputils.string.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -16,71 +17,52 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class MainCommand extends Reloadable implements CommandExecutor {
+public class MainCommand implements CommandExecutor {
 
     private final AutoPickup plugin;
-    //Translatable messages
-    private String prefix;
-    private String noPerm;
-    private String cannotConsole;
+    private final MessageSender<Message> messageSender;
 
     public MainCommand(AutoPickup plugin){
-        super(plugin);
         this.plugin = plugin;
-        this.loadMessages();
-    }
-
-
-    private void send(CommandSender sender, String msg){
-        sender.sendMessage(StringUtils.colorizeString('&',prefix+" "+msg));
-    }
-
-    private void loadMessages(){
-        FileConfiguration config = plugin.getConfig();
-
-        this.prefix = config.getString("config.prefix");
-        this.noPerm = config.getString("config.messages.no permission");
-        this.cannotConsole = config.getString("config.messages.cannot send from console");
+        this.messageSender = plugin.getMessageSender();
     }
 
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
-
         if(args.length == 0 || args[0].equalsIgnoreCase("help")) {
-            send(sender, "&6List of commands");
-            send(sender, "&f/"+label+" help");
-            send(sender, "&f/"+label+" version");
-            send(sender, "&f/"+label+" reload");
-            send(sender, "&f/"+label+" toggle");
+            this.messageSender.send(sender, "&6List of commands");
+            this.messageSender.send(sender, "&f/"+label+" help");
+            this.messageSender.send(sender, "&f/"+label+" version");
+            this.messageSender.send(sender, "&f/"+label+" reload");
+            this.messageSender.send(sender, "&f/"+label+" toggle");
 
 
         }else if(args[0].equalsIgnoreCase("reload")) {
             if(!sender.hasPermission("autoPickup.reload")) {
-                send(sender, noPerm);
+                this.messageSender.send(sender, Message.NO_PERMISSION);
                 return true;
             }
-            plugin.reload(false);
-            this.loadMessages();
-            send(sender, "&aFiles reloaded");
+            this.plugin.reload(false);
+            this.messageSender.send(sender, "&aFiles reloaded");
 
 
         }else if(args[0].equalsIgnoreCase("version")) {
             if(!sender.hasPermission("autoPickup.version")) {
-                send(sender, noPerm);
+                this.messageSender.send(sender, Message.NO_PERMISSION);
                 return true;
             }
-            if(!plugin.getVersion().equals(plugin.getLatestVersion())) {
-                send(sender, "&fVersion: &e" + plugin.getVersion() + "&f. &cUpdate available!");
-                send(sender, "&fDownload here: http://bit.ly/2Pl4Rg7");
+            if(!this.plugin.getVersion().equals(this.plugin.getLatestVersion())) {
+                this.messageSender.send(sender, "&fVersion: &e" + this.plugin.getVersion() + "&f. &cUpdate available!");
+                this.messageSender.send(sender, "&fDownload here: http://bit.ly/2Pl4Rg7");
                 return true;
             }
-            send(sender, "&fVersion: &e" + plugin.getVersion() + "&f. &aUp to date!");
+            this.messageSender.send(sender, "&fVersion: &e" + this.plugin.getVersion() + "&f. &aUp to date!");
 
 
         }else if(args[0].equalsIgnoreCase("toggle")){
             if(sender instanceof ConsoleCommandSender){
-                send(sender, cannotConsole);
+                this.messageSender.send(sender, Message.CANNOT_CONSOLE);
                 return true;
             }
             openToggleGUI((Player) sender);
@@ -90,21 +72,21 @@ public class MainCommand extends Reloadable implements CommandExecutor {
 
             //unknown command
         }else {
-            send(sender, "&cUnknown command, try &e/"+label+" help");
+            this.messageSender.send(sender, "&cUnknown command, try &e/"+label+" help");
         }
         return true;
     }
 
 
     private void openToggleGUI(Player player){
-        FileConfiguration config = plugin.getConfig();
+        FileConfiguration config = this.plugin.getConfig();
         SimpleGUI gui = new SimpleGUI(
                 StringUtils.colorizeString('&', config.getString("config.GUI.title")),
                 9,
                 "MPAutoPickup"
         );
 
-        AutoPickupSettings settings = plugin.getAutoPickupManager().getPlayer(player);
+        AutoPickupSettings settings = this.plugin.getAutoPickupManager().getPlayer(player);
 
         ItemStack block;
         ItemStack mob;
@@ -112,6 +94,7 @@ public class MainCommand extends Reloadable implements CommandExecutor {
         ItemStack smeltBlock;
         ItemStack smeltMob;
 
+        //TODO: load gui items in settings
         if(player.hasPermission("autoPickup.autoPickup.block")){
             if(settings.autoPickupBlocksEnabled()){
                 block = getConfigGUIItem("auto pickup block drops.enabled");
@@ -176,18 +159,13 @@ public class MainCommand extends Reloadable implements CommandExecutor {
 
 
     private ItemStack getConfigGUIItem(String path){
-        FileConfiguration config = plugin.getConfigYaml().getAccess();
+        FileConfiguration config = this.plugin.getConfigYaml().getAccess();
         return MPItemStacks.newItemStack(
                 Material.valueOf(config.getString("config.GUI."+path+".item")),
                 1,
                 config.getString("config.GUI."+path+".name"),
                 config.getStringList("config.GUI."+path+".lore")
         );
-    }
-
-    @Override
-    public void reload(boolean deep){
-        this.loadMessages();
     }
 
 
