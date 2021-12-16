@@ -12,42 +12,37 @@ public class MainCommandTabCompleter implements TabCompleter {
 
 
     public boolean equalsToStrings(String input, String string){
-        for(int i = 0; i < string.length(); i++){
-            if(input.equalsIgnoreCase(string.substring(0,i))){
-                return true;
-            }
-        }
-        return false;
+        return input.equalsIgnoreCase(string.substring(0, Math.min(input.length(), string.length())));
     }
 
 
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
-        List<String> lista = new ArrayList<>();
+        List<String> list = new ArrayList<>();
 
         if(args.length == 1) {
             if(args[0].equalsIgnoreCase("")) {
-                lista.add("help");
-                lista.add("version");
-                lista.add("reload");
-                lista.add("toggle");
+                list.add("help");
+                list.add("version");
+                list.add("reload");
+                list.add("toggle");
 
             } else if(equalsToStrings(args[0], "help")) {
-                lista.add("help");
+                list.add("help");
 
             } else if(equalsToStrings(args[0], "version")) {
-                lista.add("version");
+                list.add("version");
 
             } else if(equalsToStrings(args[0], "reload")) {
-                lista.add("reload");
+                list.add("reload");
 
             } else if(equalsToStrings(args[0], "toggle")) {
-                lista.add("toggle");
+                list.add("toggle");
             }
 
         }
 
-        return lista;
+        return list;
     }
 
 

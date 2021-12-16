@@ -3,15 +3,13 @@ package com.github.alfonsoleandro.autopickup.events;
 import com.github.alfonsoleandro.autopickup.AutoPickup;
 import com.github.alfonsoleandro.autopickup.managers.AutoPickupManager;
 import com.github.alfonsoleandro.autopickup.managers.AutoPickupSettings;
+import com.github.alfonsoleandro.autopickup.utils.Message;
 import com.github.alfonsoleandro.autopickup.utils.Settings;
 import com.github.alfonsoleandro.autopickup.utils.SoundSettings;
-import com.github.alfonsoleandro.mputils.reloadable.Reloadable;
-import com.github.alfonsoleandro.mputils.string.StringUtils;
+import com.github.alfonsoleandro.mputils.managers.MessageSender;
 import com.vk2gpz.vkbackpack.VKBackPack;
 import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -29,46 +27,25 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class AutoPickupEventsListener extends Reloadable implements Listener, EventExecutor {
+public class AutoPickupEventsListener implements Listener, EventExecutor {
 
     private final Random r = new Random();
     private final Set<String> alertedPlayers = new HashSet<>();
     private final Set<Material> materialsWithoutStatistics = new HashSet<>();
+
     private final AutoPickup plugin;
+    private final MessageSender<Message> messageSender;
     private final AutoPickupManager apm;
     private final Settings settings;
     private final int serverVersionDiscriminant;
-    //Messages
-    private String prefix;
-    private String inventoryFull;
 
 
     public AutoPickupEventsListener(AutoPickup plugin, int serverVersionDiscriminant){
-        super(plugin);
         this.plugin = plugin;
+        this.messageSender = plugin.getMessageSender();
         this.apm = plugin.getAutoPickupManager();
         this.settings = plugin.getSettings();
         this.serverVersionDiscriminant = serverVersionDiscriminant;
-        loadMessages();
-    }
-
-    /**
-     * Loads every message used in this class.
-     */
-    private void loadMessages(){
-        FileConfiguration config = plugin.getConfig();
-
-        this.prefix = config.getString("config.prefix");
-        this.inventoryFull = config.getString("config.messages.full inv");
-    }
-
-    /**
-     * Sends a message to a given CommandSender.
-     * @param sender The receiver of the message.
-     * @param msg The message to be sent.
-     */
-    private void send(CommandSender sender, String msg){
-        sender.sendMessage(StringUtils.colorizeString(prefix+" "+msg));
     }
 
 
@@ -80,7 +57,7 @@ public class AutoPickupEventsListener extends Reloadable implements Listener, Ev
         if(this.serverVersionDiscriminant > 8 && !event.isDropItems()) return;
 
 
-        AutoPickupSettings playerSettings = apm.getPlayer(player);
+        AutoPickupSettings playerSettings = this.apm.getPlayer(player);
         Block block = event.getBlock();
         Collection<ItemStack> drops;
         ItemStack inHand = this.serverVersionDiscriminant > 8 ?
@@ -89,7 +66,7 @@ public class AutoPickupEventsListener extends Reloadable implements Listener, Ev
 
 
         //Apply enchantments
-        if(settings.isUseVanillaEnchantments()){
+        if(this.settings.isUseVanillaEnchantments()){
             drops = block.getDrops(inHand);
         }else{
             drops = block.getDrops(new ItemStack(inHand.getType()));
@@ -118,7 +95,7 @@ public class AutoPickupEventsListener extends Reloadable implements Listener, Ev
         }
 
         //Finally auto pickup or drop items
-        if(playerSettings.autoPickupBlocksEnabled() && !settings.getBlockBlackList().contains(block.getType())){
+        if(playerSettings.autoPickupBlocksEnabled() && !this.settings.getBlockBlackList().contains(block.getType())){
             autoPickup(drops, player, Settings.AutoPickupSounds.BLOCKS);
         }else{
             Location loc = event.getBlock().getLocation();
@@ -137,12 +114,12 @@ public class AutoPickupEventsListener extends Reloadable implements Listener, Ev
 
         //Prevent non wanted drops and add statistics
         addMineBlockStatistics(player, block.getType());
-        if(serverVersionDiscriminant > 9) {
+        if(this.serverVersionDiscriminant > 9) {
             event.setDropItems(false);
         }else {
             event.setCancelled(true);
             event.getBlock().getLocation().getBlock().setType(Material.AIR);
-            if(!inHand.containsEnchantment(Enchantment.DURABILITY) || (r.nextInt(inHand.getEnchantmentLevel(Enchantment.DURABILITY)) > r.nextInt(2))){
+            if(!inHand.containsEnchantment(Enchantment.DURABILITY) || (this.r.nextInt(inHand.getEnchantmentLevel(Enchantment.DURABILITY)) > this.r.nextInt(2))){
                 inHand.setDurability((short) (inHand.getDurability()+1));
             }
         }
@@ -152,9 +129,9 @@ public class AutoPickupEventsListener extends Reloadable implements Listener, Ev
     @EventHandler (priority = EventPriority.HIGHEST)
     public void onPlayerKillEntity(EntityDeathEvent event){
         Player player = event.getEntity().getKiller();
-        if(player == null || (event.getEntity().getType().equals(EntityType.PLAYER) && !settings.isAutoPickupPlayerDrops())) return;
+        if(player == null || (event.getEntity().getType().equals(EntityType.PLAYER) && !this.settings.isAutoPickupPlayerDrops())) return;
 
-        AutoPickupSettings playerSettings = apm.getPlayer(player);
+        AutoPickupSettings playerSettings = this.apm.getPlayer(player);
 
         List<ItemStack> drops = new ArrayList<>(event.getDrops());
         event.getDrops().clear();
@@ -165,7 +142,7 @@ public class AutoPickupEventsListener extends Reloadable implements Listener, Ev
         }
 
         //Finally auto pickup or drop items
-        if(playerSettings.autoPickupMobDropsEnabled() && !settings.getEntityBlackList().contains(event.getEntityType())){
+        if(playerSettings.autoPickupMobDropsEnabled() && !this.settings.getEntityBlackList().contains(event.getEntityType())){
             autoPickup(drops, player, Settings.AutoPickupSounds.MOBS);
         }else{
             Location loc = event.getEntity().getLocation();
@@ -192,9 +169,9 @@ public class AutoPickupEventsListener extends Reloadable implements Listener, Ev
      */
     private void applySilkTouch(Collection<ItemStack> items, ItemStack inHand, Block block){
         Material blockType = block.getType();
-        if(inHand.containsEnchantment(Enchantment.SILK_TOUCH) && settings.isCustomSilkTouchEnabled() && settings.getSilkTouchMaterials().get(blockType) != null) {
+        if(inHand.containsEnchantment(Enchantment.SILK_TOUCH) && this.settings.isCustomSilkTouchEnabled() && this.settings.getSilkTouchMaterials().get(blockType) != null) {
             items.removeAll(block.getDrops(new ItemStack(inHand.getType())));
-            items.add(new ItemStack(settings.getSilkTouchMaterials().get(blockType)));
+            items.add(new ItemStack(this.settings.getSilkTouchMaterials().get(blockType)));
         }
     }
 
@@ -205,10 +182,10 @@ public class AutoPickupEventsListener extends Reloadable implements Listener, Ev
      */
     private void applyFortune(Collection<ItemStack> items, ItemStack inHand){
         if(inHand.containsEnchantment(Enchantment.LOOT_BONUS_BLOCKS) &&
-                settings.isCustomFortuneEnabled()) {
+                this.settings.isCustomFortuneEnabled()) {
             for (ItemStack item : items) {
-                if(settings.getFortuneMaterials().contains(item.getType())){
-                    int toAdd = settings.getFortuneAmount(inHand.getEnchantmentLevel(Enchantment.LOOT_BONUS_BLOCKS));
+                if(this.settings.getFortuneMaterials().contains(item.getType())){
+                    int toAdd = this.settings.getFortuneAmount(inHand.getEnchantmentLevel(Enchantment.LOOT_BONUS_BLOCKS));
                     item.setAmount(item.getAmount()+toAdd);
                 }
             }
@@ -221,8 +198,8 @@ public class AutoPickupEventsListener extends Reloadable implements Listener, Ev
      * @param items The collection of items to try to auto-smelt.
      */
     private void applyAutoSmelt(Collection<ItemStack> items){
-        if(settings.isAutoSmeltEnabled()){
-            Map<Material,Material> autoSmeltMaterials = settings.getAutoSmeltMaterials();
+        if(this.settings.isAutoSmeltEnabled()){
+            Map<Material,Material> autoSmeltMaterials = this.settings.getAutoSmeltMaterials();
             for(ItemStack drop : items) {
                 if(autoSmeltMaterials.containsKey(drop.getType())){
                     drop.setType(autoSmeltMaterials.get(drop.getType()));
@@ -245,10 +222,10 @@ public class AutoPickupEventsListener extends Reloadable implements Listener, Ev
         if(items.isEmpty()) return;
 
         for(ItemStack item : items){
-            if(settings.isVkBackPacksSupport() && hasEmptyBackPackSpace(item, player)){
+            if(this.settings.isVkBackPacksSupport() && hasEmptyBackPackSpace(item, player)){
                 VKBackPack.addItemToBackPack(player, item);
             }else if(hasEmptySpace(item ,inv)){
-                if(settings.getItemBlackList().contains(item.getType())){
+                if(this.settings.getItemBlackList().contains(item.getType())){
                     dropItem(item, player.getLocation());
                 }else {
                     inv.addItem(item);
@@ -263,7 +240,7 @@ public class AutoPickupEventsListener extends Reloadable implements Listener, Ev
             playSound(player, sound);
         }else{
             if(!playerHasBeenAlerted(player)){
-                send(player, inventoryFull);
+                this.messageSender.send(player, Message.FULL_INV);
                 playSound(player, Settings.AutoPickupSounds.FULL_INV);
                 addAlertedPlayer(player.getName());
             }
@@ -351,7 +328,7 @@ public class AutoPickupEventsListener extends Reloadable implements Listener, Ev
      * @param sound The type of sound to play for the player.
      */
     private void playSound(Player player, Settings.AutoPickupSounds sound){
-        SoundSettings ss = settings.getSound(sound);
+        SoundSettings ss = this.settings.getSound(sound);
         if(ss != null && ss.isEnabled()){
             player.playSound(player.getLocation(), ss.getSound(),  ss.getVolume(), ss.getPitch());
         }
@@ -360,25 +337,20 @@ public class AutoPickupEventsListener extends Reloadable implements Listener, Ev
 
 
     private void addAlertedPlayer(String playerName){
-        if(alertedPlayers.contains(playerName)) return;
-        alertedPlayers.add(playerName);
+        if(this.alertedPlayers.contains(playerName)) return;
+        this.alertedPlayers.add(playerName);
         new BukkitRunnable(){
             @Override
             public void run(){
-                alertedPlayers.remove(playerName);
+                AutoPickupEventsListener.this.alertedPlayers.remove(playerName);
             }
-        }.runTaskLater(plugin, settings.getTicksBeforeAlert());
+        }.runTaskLater(this.plugin, this.settings.getTicksBeforeAlert());
     }
 
     private boolean playerHasBeenAlerted(Player player){
-        return alertedPlayers.contains(player.getName());
+        return this.alertedPlayers.contains(player.getName());
     }
 
-
-    @Override
-    public void reload(boolean deep){
-        loadMessages();
-    }
 
     @Override
     public void execute(@NotNull Listener listener, @NotNull Event event) {
