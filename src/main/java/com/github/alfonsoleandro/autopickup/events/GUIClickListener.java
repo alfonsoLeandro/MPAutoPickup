@@ -2,13 +2,13 @@ package com.github.alfonsoleandro.autopickup.events;
 
 import com.github.alfonsoleandro.autopickup.AutoPickup;
 import com.github.alfonsoleandro.autopickup.managers.AutoPickupSettings;
+import com.github.alfonsoleandro.autopickup.utils.Message;
 import com.github.alfonsoleandro.mputils.guis.SimpleGUI;
 import com.github.alfonsoleandro.mputils.guis.events.GUIClickEvent;
 import com.github.alfonsoleandro.mputils.guis.utils.GUIType;
 import com.github.alfonsoleandro.mputils.itemstacks.MPItemStacks;
-import com.github.alfonsoleandro.mputils.reloadable.Reloadable;
+import com.github.alfonsoleandro.mputils.managers.MessageSender;
 import com.github.alfonsoleandro.mputils.string.StringUtils;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -16,45 +16,15 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
-public class GUIClickListener extends Reloadable implements Listener {
+public class GUIClickListener implements Listener {
 
     private final AutoPickup plugin;
-    // Translatable messages
-    private String prefix;
-    private String noPerm;
-    private String blocksEnabled;
-    private String blocksDisabled;
-    private String mobsEnabled;
-    private String mobsDisabled;
-    private String expEnabled;
-    private String expDisabled;
-    private String smeltBlockEnabled;
-    private String smeltBlockDisabled;
-    private String smeltMobEnabled;
-    private String smeltMobDisabled;
+    private final MessageSender<Message> messageSender;
 
 
     public GUIClickListener(AutoPickup plugin){
-        super(plugin);
         this.plugin = plugin;
-        loadMessages();
-    }
-
-    private void loadMessages(){
-        FileConfiguration config = plugin.getConfigYaml().getAccess();
-
-        prefix = config.getString("config.prefix");
-        blocksEnabled = config.getString("config.messages.autoPickup.blocks.enabled");
-        blocksDisabled = config.getString("config.messages.autoPickup.blocks.disabled");
-        mobsEnabled = config.getString("config.messages.autoPickup.mob.enabled");
-        mobsDisabled = config.getString("config.messages.autoPickup.mob.disabled");
-        expEnabled = config.getString("config.messages.autoPickup.exp.enabled");
-        expDisabled = config.getString("config.messages.autoPickup.exp.disabled");
-        smeltBlockEnabled = config.getString("config.messages.autoSmelt.blocks.enabled");
-        smeltBlockDisabled = config.getString("config.messages.autoSmelt.blocks.disabled");
-        smeltMobEnabled = config.getString("config.messages.autoSmelt.mob.enabled");
-        smeltMobDisabled = config.getString("config.messages.autoSmelt.mob.disabled");
-        noPerm = config.getString("config.messages.no permission");
+        this.messageSender = plugin.getMessageSender();
     }
 
 
@@ -66,67 +36,57 @@ public class GUIClickListener extends Reloadable implements Listener {
         int clickedSlot = event.getRawSlot();
         if(clickedSlot > 4 || clickedSlot < 0) return;
         Player player = (Player) event.getWhoClicked();
-        AutoPickupSettings settings = plugin.getAutoPickupManager().getPlayer(player.getName());
+        AutoPickupSettings settings = this.plugin.getAutoPickupManager().getPlayer(player.getName());
 
 
         if(clickedSlot == 0){
             if(player.hasPermission("autoPickup.autoPickup.block")) {
                 boolean wasEnabled = settings.autoPickupBlocksEnabled();
                 settings.setAutoPickupBlocks(!wasEnabled);
-                player.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                        prefix + " " + (wasEnabled ? blocksDisabled : blocksEnabled)));
+                this.messageSender.send(player, wasEnabled ? Message.AP_BLOCKS_DISABLED : Message.AP_BLOCKS_ENABLED);
                 openGUI(player);
             }else{
-                player.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                        prefix + " " + noPerm));
+                this.messageSender.send(player, Message.NO_PERMISSION);
             }
 
         }else if(clickedSlot == 1){
             if(player.hasPermission("autoPickup.autoPickup.mob")) {
                 boolean wasEnabled = settings.autoPickupMobDropsEnabled();
                 settings.setAutoPickupMobDrops(!wasEnabled);
-                player.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                        prefix + " " + (wasEnabled ? mobsDisabled : mobsEnabled)));
+                this.messageSender.send(player, wasEnabled ? Message.AP_MOB_DISABLED : Message.AP_MOB_ENABLED);
                 openGUI(player);
             }else{
-                player.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                        prefix + " " + noPerm));
+                this.messageSender.send(player, Message.NO_PERMISSION);
             }
 
         }else if(clickedSlot == 2){
             if(player.hasPermission("autoPickup.autoPickup.exp")) {
                 boolean wasEnabled = settings.autoPickupExpEnabled();
                 settings.setAutoPickupExp(!wasEnabled);
-                player.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                        prefix + " " + (wasEnabled ? expDisabled : expEnabled)));
+                this.messageSender.send(player, wasEnabled ? Message.AP_EXP_DISABLED : Message.AP_EXP_ENABLED);
                 openGUI(player);
             }else{
-                player.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                        prefix + " " + noPerm));
+                this.messageSender.send(player, Message.NO_PERMISSION);
             }
 
         }else if(clickedSlot == 3){
             if(player.hasPermission("autoPickup.autoSmelt.blocks")) {
                 boolean wasEnabled = settings.autoSmeltBlocksEnabled();
                 settings.setAutoSmeltBlocks(!wasEnabled);
-                player.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                        prefix + " " + (wasEnabled ? smeltBlockDisabled : smeltBlockEnabled)));
+                this.messageSender.send(player, wasEnabled ? Message.AS_BLOCKS_DISABLED : Message.AS_BLOCKS_ENABLED);
                 openGUI(player);
             }else{
-                player.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                        prefix + " " + noPerm));
+                this.messageSender.send(player, Message.NO_PERMISSION);
             }
 
         }else {
             if(player.hasPermission("autoPickup.autoSmelt.mob")) {
                 boolean wasEnabled = settings.autoSmeltMobEnabled();
                 settings.setAutoSmeltMobs(!wasEnabled);
-                player.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                        prefix + " " + (wasEnabled ? smeltMobDisabled : smeltMobEnabled)));
+                this.messageSender.send(player, wasEnabled ? Message.AS_MOB_DISABLED : Message.AS_MOB_ENABLED);
                 openGUI(player);
             }else{
-                player.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                        prefix + " " + noPerm));
+                this.messageSender.send(player, Message.NO_PERMISSION);
             }
 
         }
@@ -134,14 +94,14 @@ public class GUIClickListener extends Reloadable implements Listener {
 
 
     private void openGUI(Player player){
-        FileConfiguration config = plugin.getConfig();
+        FileConfiguration config = this.plugin.getConfig();
         SimpleGUI gui = new SimpleGUI(
                 StringUtils.colorizeString('&', config.getString("config.GUI.title")),
                 9,
                 "MPAutoPickup"
         );
 
-        AutoPickupSettings settings = plugin.getAutoPickupManager().getPlayer(player);
+        AutoPickupSettings settings = this.plugin.getAutoPickupManager().getPlayer(player);
 
         ItemStack block;
         ItemStack mob;
@@ -149,6 +109,7 @@ public class GUIClickListener extends Reloadable implements Listener {
         ItemStack smeltBlock;
         ItemStack smeltMob;
 
+        //TODO: load gui items in settings class
         if(player.hasPermission("autoPickup.autoPickup.block")){
             if(settings.autoPickupBlocksEnabled()){
                 block = getConfigGUIItem("auto pickup block drops.enabled");
@@ -212,7 +173,7 @@ public class GUIClickListener extends Reloadable implements Listener {
 
 
     private ItemStack getConfigGUIItem(String path){
-        FileConfiguration config = plugin.getConfigYaml().getAccess();
+        FileConfiguration config = this.plugin.getConfigYaml().getAccess();
         return MPItemStacks.newItemStack(
                 Material.valueOf(config.getString("config.GUI."+path+".item")),
                 1,
@@ -221,11 +182,5 @@ public class GUIClickListener extends Reloadable implements Listener {
         );
     }
 
-
-
-    @Override
-    public void reload(boolean deep){
-        loadMessages();
-    }
 
 }
