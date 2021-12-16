@@ -22,6 +22,11 @@ config:
   # it will then check for an empty space in the players inventory.
   # VKBackPacks needed for this to work.
   vkBackPacks support: true
+  # Should items try to be auto-picked up to a player's BetterBackpacks? PLEASE READ
+  # If set to true, when having a full inventory, if a player has autopickup blocks enabled and this setting
+  # is set to true, the player will be able to pick up every dropped item from the ground directly to the backpack.
+  # BetterBackpacks free or pro needed for this to work.
+  BetterBackpacks support: true
   # The amount of time to wait before letting a player know that their inventory is full after the first one.
   # (prevent spam)
   # format: xTIMEUNIT

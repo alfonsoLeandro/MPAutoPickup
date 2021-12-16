@@ -222,7 +222,7 @@ public class AutoPickupEventsListener implements Listener, EventExecutor {
         if(items.isEmpty()) return;
 
         for(ItemStack item : items){
-            if(this.settings.isVkBackPacksSupport() && hasEmptyBackPackSpace(item, player)){
+            if(this.settings.isVkBackpacksSupport() && hasEmptyBackPackSpace(item, player)){
                 VKBackPack.addItemToBackPack(player, item);
             }else if(hasEmptySpace(item ,inv)){
                 if(this.settings.getItemBlackList().contains(item.getType())){

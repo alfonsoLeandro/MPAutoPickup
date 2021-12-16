@@ -14,6 +14,7 @@ import com.github.alfonsoleandro.mputils.reloadable.ReloaderPlugin;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
@@ -29,13 +30,13 @@ import java.util.Arrays;
 
 public class AutoPickup extends ReloaderPlugin {
 
-    private final PluginDescriptionFile pdfFile = getDescription();
-    private final String version = this.pdfFile.getVersion();
-    private String latestVersion;
     private final char color = '2';
     //Ex: 1.8.9 ->  8 = discriminant
     private final int serverVersionDiscriminant = Integer.parseInt(
             getServer().getBukkitVersion().split("\\.")[1].split("-")[0]);
+    private final PluginDescriptionFile pdfFile = getDescription();
+    private final String version = this.pdfFile.getVersion();
+    private String latestVersion;
     private AutoPickupManager autoPickupManager;
     private Settings settings;
     private MessageSender<Message> messageSender;
@@ -53,6 +54,8 @@ public class AutoPickup extends ReloaderPlugin {
         this.messageSender.send("Please consider subscribing to my yt channel: &c" + this.pdfFile.getWebsite());
         this.autoPickupManager = new AutoPickupManager(this);
         this.settings = new Settings(this);
+        this.messageSender.send("&fVKBackpacks "+(this.settings.isVkBackpacksSupport() ? "&aFound" : "&cNot found"));
+        this.messageSender.send("&fBetterBackpacks "+(this.settings.isBetterBackpacksSupport() ? "&aFound" : "&cNot found"));
         registerEvents();
         registerCommands();
         updateChecker();
@@ -162,6 +165,7 @@ public class AutoPickup extends ReloaderPlugin {
         this.configYaml = new YamlFile(this, "config.yml");
         if(firstConfig){
             checkLegacyFields();
+            checkForNewFields();
         }
     }
 
@@ -197,6 +201,19 @@ public class AutoPickup extends ReloaderPlugin {
             getConfigYaml().save(true);
         }
 
+    }
+
+    /**
+     * Checks for server version to adjust some version sensible fields like sounds names.
+     */
+    private void checkForNewFields(){
+        FileConfiguration actualConfig = YamlConfiguration.loadConfiguration(new File(this.getDataFolder(), "config.yml"));
+        FileConfiguration config = getConfig();
+
+        if(!actualConfig.contains("BetterBackpacks support")){
+            config.set("BetterBackpacks support", true);
+            this.configYaml.save(false);
+        }
     }
 
     /**

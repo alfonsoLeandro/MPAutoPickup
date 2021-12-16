@@ -8,7 +8,6 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
-import org.bukkit.plugin.Plugin;
 import org.mariuszgromada.math.mxparser.Expression;
 
 import java.util.*;
@@ -24,7 +23,8 @@ public class Settings extends Reloadable {
     private boolean customFortuneEnabled;
     private boolean autoSmeltEnabled;
     private boolean autoPickupPlayerDrops;
-    private boolean vkBackPacksSupport;
+    private boolean vkBackpacksSupport;
+    private boolean betterBackpacksSupport;
 
     private int ticksBeforeAlert;
 
@@ -54,9 +54,10 @@ public class Settings extends Reloadable {
         this.customFortuneEnabled = config.getBoolean("config.fortune.enabled");
         this.autoSmeltEnabled = config.getBoolean("config.auto smelt.enabled");
         this.autoPickupPlayerDrops = config.getBoolean("config.auto pickup player drops");
-        Plugin vkBp = Bukkit.getPluginManager().getPlugin("VKBackPack");
-        this.vkBackPacksSupport = config.getBoolean("config.vkBackPacks support") &&
-                vkBp != null && vkBp.isEnabled();
+        boolean vkBpEnabled = Bukkit.getPluginManager().isPluginEnabled("VKBackPack");
+        this.vkBackpacksSupport = config.getBoolean("config.vkBackPacks support") && vkBpEnabled;
+        boolean bBackpacks = Bukkit.getPluginManager().isPluginEnabled("BetterBackpacks");
+        this.betterBackpacksSupport = config.getBoolean("config.BetterBackpacks support") && bBackpacks;
 
         String timeString = config.getString("config.time before full inv alert", "0s");
         this.ticksBeforeAlert = TimeUtils.getTicks(
@@ -160,8 +161,12 @@ public class Settings extends Reloadable {
         return this.autoPickupPlayerDrops;
     }
 
-    public boolean isVkBackPacksSupport() {
-        return this.vkBackPacksSupport;
+    public boolean isVkBackpacksSupport() {
+        return this.vkBackpacksSupport;
+    }
+
+    public boolean isBetterBackpacksSupport() {
+        return this.betterBackpacksSupport;
     }
 
 
