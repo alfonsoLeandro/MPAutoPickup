@@ -30,14 +30,14 @@ public class SoundSettings {
     }
 
     public Sound getSound() {
-        return sound;
+        return this.sound;
     }
 
     public float getPitch() {
-        return minPitch == maxPitch ? (float)minPitch : (float)ThreadLocalRandom.current().nextDouble(minPitch, maxPitch);
+        return this.minPitch == this.maxPitch ? (float) this.minPitch : (float)ThreadLocalRandom.current().nextDouble(this.minPitch, this.maxPitch);
     }
 
     public float getVolume() {
-        return minVolume == maxVolume ? (float)minVolume : (float)ThreadLocalRandom.current().nextDouble(minVolume, maxVolume);
+        return this.minVolume == this.maxVolume ? (float) this.minVolume : (float)ThreadLocalRandom.current().nextDouble(this.minVolume, this.maxVolume);
     }
 }

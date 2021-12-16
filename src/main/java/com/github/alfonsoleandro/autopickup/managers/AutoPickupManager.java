@@ -18,10 +18,10 @@ public class AutoPickupManager {
     }
 
     public @NotNull AutoPickupSettings getPlayer(String playerName){
-        if(!players.containsKey(playerName)){
+        if(!this.players.containsKey(playerName)){
             loadPlayer(playerName);
         }
-        return players.get(playerName);
+        return this.players.get(playerName);
     }
 
     public @NotNull AutoPickupSettings getPlayer(Player player){
@@ -31,7 +31,7 @@ public class AutoPickupManager {
 
 
     public void loadPlayer(String playerName){
-        FileConfiguration players = plugin.getPlayersYaml().getAccess();
+        FileConfiguration players = this.plugin.getPlayersYaml().getAccess();
 
         if(players.contains("players."+playerName)){
             this.players.put(playerName, new AutoPickupSettings(
@@ -42,7 +42,7 @@ public class AutoPickupManager {
                     players.getBoolean("players."+playerName+".smelt mobs")
             ));
         }else{
-            FileConfiguration config = plugin.getConfig();
+            FileConfiguration config = this.plugin.getConfig();
             this.players.put(playerName, new AutoPickupSettings(
                     config.getBoolean("config.default values.autoPickup blocks"),
                     config.getBoolean("config.default values.autoPickup mobs"),
@@ -55,8 +55,8 @@ public class AutoPickupManager {
     }
 
     public void savePlayer(String playerName, boolean async){
-        if(!players.containsKey(playerName)) return;
-        FileConfiguration players = plugin.getPlayersYaml().getAccess();
+        if(!this.players.containsKey(playerName)) return;
+        FileConfiguration players = this.plugin.getPlayersYaml().getAccess();
         AutoPickupSettings settings = this.players.get(playerName);
 
         players.set("players."+playerName+".blocks", settings.autoPickupBlocksEnabled());
@@ -65,7 +65,7 @@ public class AutoPickupManager {
         players.set("players."+playerName+".smelt blocks", settings.autoSmeltBlocksEnabled());
         players.set("players."+playerName+".smelt mobs", settings.autoSmeltMobEnabled());
 
-        plugin.getPlayersYaml().save(async);
+        this.plugin.getPlayersYaml().save(async);
     }
 
     public void saveAll() {

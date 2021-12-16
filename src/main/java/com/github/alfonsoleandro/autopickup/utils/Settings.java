@@ -4,7 +4,6 @@ import com.github.alfonsoleandro.autopickup.AutoPickup;
 import com.github.alfonsoleandro.mputils.reloadable.Reloadable;
 import com.github.alfonsoleandro.mputils.time.TimeUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -48,7 +47,7 @@ public class Settings extends Reloadable {
     }
 
     private void loadFields(){
-        FileConfiguration config = plugin.getConfig();
+        FileConfiguration config = this.plugin.getConfig();
 
         this.useVanillaEnchantments = config.getBoolean("config.use vanilla enchantments");
         this.customSilkTouchEnabled = config.getBoolean("config.silk touch.enabled");
@@ -142,27 +141,27 @@ public class Settings extends Reloadable {
     //Getters
 
     public boolean isUseVanillaEnchantments() {
-        return useVanillaEnchantments;
+        return this.useVanillaEnchantments;
     }
 
     public boolean isCustomSilkTouchEnabled() {
-        return customSilkTouchEnabled;
+        return this.customSilkTouchEnabled;
     }
 
     public boolean isCustomFortuneEnabled() {
-        return customFortuneEnabled;
+        return this.customFortuneEnabled;
     }
 
     public boolean isAutoSmeltEnabled() {
-        return autoSmeltEnabled;
+        return this.autoSmeltEnabled;
     }
 
     public boolean isAutoPickupPlayerDrops() {
-        return autoPickupPlayerDrops;
+        return this.autoPickupPlayerDrops;
     }
 
     public boolean isVkBackPacksSupport() {
-        return vkBackPacksSupport;
+        return this.vkBackPacksSupport;
     }
 
 
@@ -175,7 +174,7 @@ public class Settings extends Reloadable {
         double v1 = new Expression(values[0]).calculate();
         double v2 = new Expression(values[1]).calculate();
 
-        return (int) (r.nextInt((int) (v2-v1+1))+v1);
+        return (int) (this.r.nextInt((int) (v2-v1+1))+v1);
     }
 
 
@@ -185,28 +184,28 @@ public class Settings extends Reloadable {
 
 
     public Set<Material> getFortuneMaterials() {
-        return fortuneMaterials;
+        return this.fortuneMaterials;
     }
 
     public Set<Material> getItemBlackList() {
-        return itemBlackList;
+        return this.itemBlackList;
     }
 
     public Set<Material> getBlockBlackList() {
-        return blockBlackList;
+        return this.blockBlackList;
     }
 
     public Set<EntityType> getEntityBlackList() {
-        return entityBlackList;
+        return this.entityBlackList;
     }
 
 
     public Map<Material, Material> getSilkTouchMaterials() {
-        return silkTouchMaterials;
+        return this.silkTouchMaterials;
     }
 
     public Map<Material, Material> getAutoSmeltMaterials() {
-        return autoSmeltMaterials;
+        return this.autoSmeltMaterials;
     }
 
 
@@ -215,9 +214,8 @@ public class Settings extends Reloadable {
      * @param sound The sound name in config.
      */
     private void errorLoadingSound(String sound){
-        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&',
-                plugin.getConfigYaml().getAccess().getString("config.prefix")+" &cThere has been an error while trying to load the \"&e"+sound+"&c\" sound from config. please verify your fields."));
-    }
+        this.plugin.getMessageSender().send("&cThere has been an error while trying to load the \"&e"+sound+"&c\" sound from config. please verify your fields.");
+     }
 
 
     @Override

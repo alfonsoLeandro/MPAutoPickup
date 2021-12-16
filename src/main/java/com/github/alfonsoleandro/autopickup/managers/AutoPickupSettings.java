@@ -9,11 +9,11 @@ public class AutoPickupSettings {
                               boolean autoPickupExpOrbs,
                               boolean autoSmeltBlocks,
                               boolean autoSmeltMob){
-        settings[0] = autoPickupBlocks;
-        settings[1] = autoPickupMobDrops;
-        settings[2] = autoPickupExpOrbs;
-        settings[3] = autoSmeltBlocks;
-        settings[4] = autoSmeltMob;
+        this.settings[0] = autoPickupBlocks;
+        this.settings[1] = autoPickupMobDrops;
+        this.settings[2] = autoPickupExpOrbs;
+        this.settings[3] = autoSmeltBlocks;
+        this.settings[4] = autoSmeltMob;
     }
 
 

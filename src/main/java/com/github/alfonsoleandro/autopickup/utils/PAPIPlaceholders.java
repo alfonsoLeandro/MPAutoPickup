@@ -2,17 +2,19 @@ package com.github.alfonsoleandro.autopickup.utils;
 
 import com.github.alfonsoleandro.autopickup.AutoPickup;
 import com.github.alfonsoleandro.autopickup.managers.AutoPickupSettings;
+import com.github.alfonsoleandro.mputils.managers.MessageSender;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class PAPIPlaceholders extends PlaceholderExpansion {
 
     private final AutoPickup plugin;
+    private final MessageSender<Message> messageSender;
 
     public PAPIPlaceholders(AutoPickup plugin){
         this.plugin = plugin;
+        this.messageSender = plugin.getMessageSender();
     }
 
     @Override
@@ -27,12 +29,12 @@ public class PAPIPlaceholders extends PlaceholderExpansion {
 
     @Override
     public @NotNull String getAuthor(){
-        return plugin.getDescription().getAuthors().toString();
+        return this.plugin.getDescription().getAuthors().toString();
     }
 
     @Override
     public @NotNull String getVersion(){
-        return plugin.getDescription().getVersion();
+        return this.plugin.getDescription().getVersion();
     }
 
     /*
@@ -67,10 +69,9 @@ public class PAPIPlaceholders extends PlaceholderExpansion {
         if(player == null){
             return "";
         }
-        AutoPickupSettings playerSettings = plugin.getAutoPickupManager().getPlayer(player);
-        FileConfiguration config = plugin.getConfigYaml().getAccess();
-        String enabled = config.getString("config.messages.placeholder status.enabled");
-        String disabled = config.getString("config.messages.placeholder status.disabled");
+        AutoPickupSettings playerSettings = this.plugin.getAutoPickupManager().getPlayer(player);
+        String enabled = this.messageSender.getString(Message.PLACEHOLDER_ENABLED);
+        String disabled = this.messageSender.getString(Message.PLACEHOLDER_DISABLED);
 
 
 
