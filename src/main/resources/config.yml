@@ -1,0 +1,254 @@
+# MPAutoPickup by MasterPlugins (lelesape#3612)
+config:
+  prefix: '&f[&2MPAutoPickup&f]'
+  # The priorities for each of the events. The priority modifies the order in which events are listened.
+  # You can modify this to your liking so you can adjust what happens and when, say you have another plugin with
+  # (for example) custom enchantments that modify block drops, then you will want block break to be highest
+  # so the enchantments plugin has enough time to modify block drops, and auto-pickup will recognize those changes.
+  # PLEASE be careful with this setting, if you, for example, decide to set block break event's priority to LOWEST
+  # it will run first and players will be able to break protected regions as the protection plugin's events will run
+  # after auto-pickup.
+  # When changing these values, you must re-load the plugin or your server manually (/ap reload will not work).
+  # Event priorities in execution order: LOWEST -> LOW -> NORMAL -> HIGH -> HIGHEST
+  event priorities:
+    block break: HIGHEST
+    entity death: HIGHEST
+  # Whether to use the custom silk touch and fortune drops or use the vanilla ones
+  use vanilla enchantments: true
+  # Whether to auto-pickup the items a player drops when killed.
+  auto pickup player drops: false
+  # Should items try to be auto-picked up to a player's VKBackPack?
+  # If set to true, the plugin will check for an empty space in any of the player's backpacks, if none found,
+  # it will then check for an empty space in the players inventory.
+  # VKBackPacks needed for this to work.
+  vkBackPacks support: true
+  # The amount of time to wait before letting a player know that their inventory is full after the first one.
+  # (prevent spam)
+  # format: xTIMEUNIT
+  # TimeUnits: t (ticks, 20t = 1s), s (seconds), m (minutes), h (hours), but why would anyone use hours?
+  # Examples: 5s, 10m, 99h, 45t
+  # Use 0t, 0s, 0m or 0h to disable.
+  time before full inv alert: 5s
+  # Metrics are a way to "track" and count how many servers are using this plugin.
+  # It really should not affect server performance, so please do not disable metrics, you can if you really want though.
+  # But leaving this in true really helps me, the developer :D
+  use metrics: true
+  # The default values for the auto-pickup & auto-smelt settings.
+  default values:
+    autoPickup blocks: false
+    autoPickup mobs: false
+    autoPickup exp: false
+    autoSmelt blocks: false
+    autoSmelt mobs: false
+  # Sound options for each event
+  # Volume and pitch are able to take a range of values to then generate a random
+  # value between the two (just like vanilla Minecraft). To do so, instead of just adding a number,
+  # try adding a "-" in between two numbers.
+  # Sound: A list of sound names (latest version) can be found here:
+  # https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html
+  # Volume: The absolute highest volume is 1.0, nothing will happen if you set volume to 1000, it will still be 1.0
+  # Pitch: The "speed" at which the sound plays at. Ranges from 0.5 (half the speed) and 2.0 (200% speed).
+  # 1.0 is normal speed.
+  sound:
+    block:
+      enabled: true
+      sound name: ENTITY_ITEM_PICKUP
+      volume: 0.3
+      pitch: 0.7-2.0
+    mob:
+      enabled: true
+      sound name: ENTITY_ITEM_PICKUP
+      volume: 0.3
+      pitch: 0.7-2.0
+    exp:
+      enabled: true
+      sound name: ENTITY_EXPERIENCE_ORB_PICKUP
+      volume: 0.1
+      pitch: 0.7-1.2
+    full inv:
+      enabled: true
+      sound name: ENTITY_VILLAGER_NO
+      volume: 0.7
+      pitch: 1.0
+  GUI:
+    title: '&a&lToggle auto-pickups'
+    auto pickup block drops:
+      enabled:
+        item: 'DIAMOND'
+        name: '&aToggle block auto-pickup'
+        lore:
+          - '&7Click here to &cdisable'
+          - '&7auto-pickup for block drops'
+      disabled:
+        item: 'REDSTONE'
+        name: '&cToggle block auto-pickup'
+        lore:
+          - '&7Click here to &aenable'
+          - '&7auto-pickup for block drops'
+      no permission:
+        item: 'BARRIER'
+        name: '&cToggle block auto-pickup'
+        lore:
+          - '&fYou have no permission'
+          - '&fto use block auto-pickup'
+    auto pickup mob drops:
+      enabled:
+        item: 'CREEPER_HEAD'
+        name: '&aToggle mob auto-pickup'
+        lore:
+          - '&7Click here to &cdisable'
+          - '&7auto-pickup for mob drops'
+      disabled:
+        item: 'ZOMBIE_HEAD'
+        name: '&cToggle mob auto-pickup'
+        lore:
+          - '&7Click here to &aenable'
+          - '&7auto-pickup for mob drops'
+      no permission:
+        item: 'BARRIER'
+        name: '&cToggle mob auto-pickup'
+        lore:
+          - '&fYou have no permission'
+          - '&fto use mob auto-pickup'
+    auto pickup exp:
+      enabled:
+        item: 'EXPERIENCE_BOTTLE'
+        name: '&aToggle exp auto-pickup'
+        lore:
+          - '&7Click here to &cdisable'
+          - '&7auto-pickup for experience orbs'
+      disabled:
+        item: 'EXPERIENCE_BOTTLE'
+        name: '&cToggle exp auto-pickup'
+        lore:
+          - '&7Click here to &aenable'
+          - '&7auto-pickup for experience orbs'
+      no permission:
+        item: 'BARRIER'
+        name: '&cToggle mob auto-pickup'
+        lore:
+          - '&fYou have no permission'
+          - '&fto use experience auto-pickup'
+    auto smelt blocks:
+      enabled:
+        item: 'FURNACE'
+        name: '&aToggle block auto-smelt'
+        lore:
+          - '&7Click here to &cdisable'
+          - '&7block auto-smelt'
+      disabled:
+        item: 'FURNACE'
+        name: '&cToggle block auto-smelt'
+        lore:
+          - '&7Click here to &aenable'
+          - '&7block auto-smelt'
+      no permission:
+        item: 'BARRIER'
+        name: '&cToggle block auto-smelt'
+        lore:
+          - '&fYou have no permission'
+          - '&fto use block auto-smelt'
+    auto smelt mobs:
+      enabled:
+        item: 'LAVA_BUCKET'
+        name: '&aToggle mob auto-smelt'
+        lore:
+          - '&7Click here to &cdisable'
+          - '&7mob auto-smelt'
+      disabled:
+        item: 'ICE'
+        name: '&cToggle mob auto-smelt'
+        lore:
+          - '&7Click here to &aenable'
+          - '&7mob auto-smelt'
+      no permission:
+        item: 'BARRIER'
+        name: '&cToggle mob auto-smelt'
+        lore:
+          - '&fYou have no permission'
+          - '&fto use mob auto-smelt'
+  # A list of items that a player will not be able to auto pickup (block or mob drops)
+  # Default: an empty list. Before adding any item type here, remember to remove the
+  # empty braces ([]), these represent an empty list.
+  item blacklist: []
+#    - 'CHEST'
+#    - 'GRASS_BLOCK'
+#    - 'FEATHER'
+#    - 'DIAMOND'
+  # A list of blocks whose drops a player will not be able to auto pickup
+  # Default: an empty list. Before adding any block type here, remember to remove the
+  # empty braces ([]), these represent an empty list.
+  block blacklist: []
+#    - 'CHEST'
+#    - 'GRASS_BLOCK'
+  # A list of entities whose drops a player will not be able to auto pickup
+  # Default: an empty list. Before adding any block type here, remember to remove the
+  # empty braces ([]), these represent an empty list.
+  entity blacklist: []
+#    - 'ENDERMAN'
+  fortune:
+    # Should non vanilla fortune be enabled?
+    # PLEASE TEST THIS FEATURE BEFORE USING IT. Make sure to adjust the amount to something reasonable, I got a load
+    # of carrots when testing this using fortune 3 and the default amount. (This is also because)
+    # If set to false and vanilla enchantments also set to false, fortune enchantment will be ignored
+    enabled: true
+    # The amount of items to ADD to an item that can be mined using fortune.
+    # Please take into account that this ADDS items, players will
+    # always receive 1 of the item, and then the fortune will be applied.
+    # format: 'MIN;MAX'
+    # %level% being the fortune enchantment level on the tool
+    # You can use any (or almost any, not tested) mathematical expression on both sides, some examples:
+    # '%level%/2;%level%*2', '%level%;%level%*%level%'
+    amount: '0;%level%+1'
+    # A list of items that can be applied fortune.
+    # i.e: DIAMOND, id in the list, when mining a diamond ore the amount of it will be increased. (fortune duh)
+    items:
+      - DIAMOND
+      - EMERALD
+      - COAL
+      - REDSTONE
+  silk touch:
+    # Should non vanilla silk touch be enabled?
+    # If set to false and vanilla enchantments also set to false, silk touch enchantment will be ignored
+    enabled: true
+    # When breaking (the block type on the left) it will drop (the block type on the right)
+    blocks:
+      LAPIS_ORE: 'LAPIS_ORE'
+      DIAMOND_ORE: 'DIAMOND_ORE'
+      STONE: 'STONE'
+      GRASS_BLOCK: 'GRASS_BLOCK'
+      GRASS: 'GRASS'
+  auto smelt:
+    enabled: true
+    # Auto smelt is checked on BLOCK DROPS, not BLOCK, so if a player
+    # mines a diamond ore, it will check on this file for DIAMOND (the DIAMOND_ORE drop), not DIAMOND_ORE
+    materials:
+      COBBLESTONE: 'STONE'
+      STONE: 'STONE'
+      IRON_ORE: 'IRON_INGOT'
+      GOLD_ORE: 'GOLD_INGOT'
+      ROTTEN_FLESH: 'COOKED_BEEF'
+  messages:
+    no permission: '&cNo permission'
+    autoPickup:
+      blocks:
+        enabled: '&fBlock drops AutoPickup &fhas been &aenabled &ffor you'
+        disabled: '&fBlock drops AutoPickup &fhas been &cdisabled &ffor you'
+      mob:
+        enabled: '&fMob drops AutoPickup &fhas been &aenabled &ffor you'
+        disabled: '&fMob drops AutoPickup &fhas been &cdisabled &ffor you'
+      exp:
+        enabled: '&fExperience AutoPickup &fhas been &aenabled &ffor you'
+        disabled: '&fExperience AutoPickup &fhas been &cdisabled &ffor you'
+    autoSmelt:
+      blocks:
+        enabled: '&fBlock drops AutoSmelt &fhas been &aenabled &ffor you'
+        disabled: '&fBlock drops AutoSmelt &fhas been &cdisabled &ffor you'
+      mob:
+        enabled: '&fMob drops AutoSmelt &fhas been &aenabled &ffor you'
+        disabled: '&fMob drops AutoSmelt &fhas been &cdisabled &ffor you'
+    full inv: '&cYour inventory is full. &fSome items may be dropped to the ground'
+    cannot send from console: '&cThat command can only be sent by a player'
+    placeholder status:
+      enabled: '&aEnabled'
+      disabled: '&cDisabled'

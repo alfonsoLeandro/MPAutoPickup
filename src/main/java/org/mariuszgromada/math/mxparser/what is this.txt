@@ -1,0 +1,5 @@
+This are some of the classes I took from mariuszgromada's MathXParser,
+I decided to take just the classes that I needed instead of just importing the whole thing over maven.
+I do not own any of the classes or files under the "org.mariuszgromada.math.mxparser" package.
+Check out MathXParser here: https://github.com/mariuszgromada/MathParser.org-mXparser
+or here https://mathparser.org/

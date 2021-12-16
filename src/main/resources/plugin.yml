@@ -1,0 +1,60 @@
+name: MPAutoPickup
+version: ${project.version}
+main: com.github.alfonsoleandro.autopickup.AutoPickup
+api-version: "1.13"
+authors: [lelesape]
+depend: [MPUtils]
+softdepend: [VKBackPacks, PlaceholderAPI, BetterBackpacks]
+description: Let your users be able to automatically pick up the items the break
+website: http://bit.ly/2mwvHWN
+
+commands:
+  autopickup:
+    description: MPAutoPickup main command.
+    use: Command was not registered properly.
+    aliases: [ap, as]
+
+
+permissions:
+  autoPickup.version:
+    description: Lets you check the plugin's current version.
+    default: op
+  autoPickup.reload:
+    description: Allows a player to reload the plugin.
+    default: op
+  autoPickup.autoPickup.blocks:
+    description: Allows a player to autopickup block drops.
+    default: op
+  autoPickup.autoPickup.mobs:
+    description: Allows a player to autopickup mob drops.
+    default: op
+  autoPickup.autoPickup.exp:
+    description: Allows a player to autopickup experience orbs.
+    default: op
+  autoPickup.autoSmelt.blocks:
+    description: Allows a player to autosmelt block drops.
+    default: op
+  autoPickup.autoSmelt.mobs:
+    description: Allows a player to autosmelt.
+    default: op
+  autoPickup.autoPickup.*:
+    description: Gives permission to every autoPickup type.
+    default: op
+    children:
+      autoPickup.autoPickup.blocks: true
+      autoPickup.autoPickup.mobs: true
+      autoPickup.autoPickup.exp: true
+  autoPickup.autoSmelt.*:
+    description: Gives permission to every autoSmelt type.
+    default: op
+    children:
+      autoPickup.autoSmelt.blocks: true
+      autoPickup.autoSmelt.mobs: true
+  autoPickup.*:
+    description: Gives every permission available.
+    default: op
+    children:
+      autoPickup.version: true
+      autoPickup.reload: true
+      autoPickup.autoPickup.*: true
+      autoPickup.autoSmelt.*: true
