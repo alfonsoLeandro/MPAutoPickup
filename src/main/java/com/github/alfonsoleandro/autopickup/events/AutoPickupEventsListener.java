@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.*;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -121,6 +122,14 @@ public class AutoPickupEventsListener implements Listener, EventExecutor {
             event.getBlock().getLocation().getBlock().setType(Material.AIR);
             if(!inHand.containsEnchantment(Enchantment.DURABILITY) || (this.r.nextInt(inHand.getEnchantmentLevel(Enchantment.DURABILITY)) > this.r.nextInt(2))){
                 inHand.setDurability((short) (inHand.getDurability()+1));
+            }
+            if(inHand.getDurability() > inHand.getType().getMaxDurability()){
+                // "After this event, the item's amount will be set to item amount - 1
+                // and its durability will be reset to 0."
+                PlayerItemBreakEvent itemBreakEvent = new PlayerItemBreakEvent(player, inHand);
+                Bukkit.getPluginManager().callEvent(itemBreakEvent);
+                inHand.setAmount(inHand.getAmount()-1);
+                inHand.setDurability((short) 0);
             }
         }
 
