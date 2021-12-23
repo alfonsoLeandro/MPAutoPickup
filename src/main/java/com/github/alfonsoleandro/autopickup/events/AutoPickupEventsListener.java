@@ -10,6 +10,7 @@ import com.github.alfonsoleandro.mputils.managers.MessageSender;
 import com.vk2gpz.vkbackpack.VKBackPack;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.type.Snow;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -89,13 +90,22 @@ public class AutoPickupEventsListener implements Listener, EventExecutor {
             block.getState().update();
         }
 
+        //Check if block is snow layer(s)
+        if(drops.isEmpty() && block.getType().equals(Material.SNOW)){
+            int layers = this.serverVersionDiscriminant >= 13 ?
+                    ((Snow)block.getBlockData()).getLayers()
+                    :
+                    block.getData()+1;
+            drops.add(new ItemStack(Material.SNOWBALL, layers));
+        }
+
 
         //Apply autoSmelt
         if(playerSettings.autoSmeltBlocksEnabled()){
             applyAutoSmelt(drops);
         }
 
-        //Finally auto pickup or drop items
+        //Finally, auto pickup or drop items
         if(playerSettings.autoPickupBlocksEnabled() && !this.settings.getBlockBlackList().contains(block.getType())){
             autoPickup(drops, player, Settings.AutoPickupSounds.BLOCKS);
         }else{
