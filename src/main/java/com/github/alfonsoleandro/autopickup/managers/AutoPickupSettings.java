@@ -2,18 +2,22 @@ package com.github.alfonsoleandro.autopickup.managers;
 
 public class AutoPickupSettings {
 
-    private final boolean[] settings = new boolean[5];
+    private final boolean[] settings = new boolean[7];
 
     public AutoPickupSettings(boolean autoPickupBlocks,
                               boolean autoPickupMobDrops,
                               boolean autoPickupExpOrbs,
                               boolean autoSmeltBlocks,
-                              boolean autoSmeltMob){
+                              boolean autoSmeltMob,
+                              boolean carefulBreak,
+                              boolean carefulSmelt){
         this.settings[0] = autoPickupBlocks;
         this.settings[1] = autoPickupMobDrops;
         this.settings[2] = autoPickupExpOrbs;
         this.settings[3] = autoSmeltBlocks;
         this.settings[4] = autoSmeltMob;
+        this.settings[5] = carefulBreak;
+        this.settings[6] = carefulSmelt;
     }
 
 
@@ -37,6 +41,14 @@ public class AutoPickupSettings {
         return this.settings[4];
     }
 
+    public boolean carefulBreakEnabled(){
+        return this.settings[5];
+    }
+
+    public boolean carefulSmeltEnabled(){
+        return this.settings[6];
+    }
+
 
     public void setAutoPickupBlocks(boolean value){
         this.settings[0] = value;
@@ -56,6 +68,14 @@ public class AutoPickupSettings {
 
     public void setAutoSmeltMobs(boolean value){
         this.settings[4] = value;
+    }
+
+    public void setCarefulBreak(boolean value){
+        this.settings[5] = value;
+    }
+
+    public void setCarefulSmelt(boolean value){
+        this.settings[6] = value;
     }
 
 

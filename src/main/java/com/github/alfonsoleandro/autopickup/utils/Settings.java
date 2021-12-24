@@ -1,14 +1,18 @@
 package com.github.alfonsoleandro.autopickup.utils;
 
 import com.github.alfonsoleandro.autopickup.AutoPickup;
+import com.github.alfonsoleandro.autopickup.managers.AutoPickupSettings;
+import com.github.alfonsoleandro.mputils.guis.SimpleGUI;
 import com.github.alfonsoleandro.mputils.itemstacks.MPItemStacks;
 import com.github.alfonsoleandro.mputils.reloadable.Reloadable;
+import com.github.alfonsoleandro.mputils.string.StringUtils;
 import com.github.alfonsoleandro.mputils.time.TimeUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.mariuszgromada.math.mxparser.Expression;
 
@@ -27,6 +31,8 @@ public class Settings extends Reloadable {
     private boolean autoPickupPlayerDrops;
     private boolean vkBackpacksSupport;
     private boolean betterBackpacksSupport;
+    private boolean globalCarefulBreakEnabled;
+    private boolean globalCarefulSmeltEnabled;
 
     private int ticksBeforeAlert;
 
@@ -47,6 +53,14 @@ public class Settings extends Reloadable {
     private ItemStack aSMobEnabled;
     private ItemStack aSMobDisabled;
     private ItemStack aSMobNoPermission;
+    private ItemStack carefulBreakEnabled;
+    private ItemStack carefulBreakDisabled;
+    private ItemStack carefulBreakNoPermission;
+    private ItemStack carefulBreakDisabledGlobally;
+    private ItemStack carefulSmeltEnabled;
+    private ItemStack carefulSmeltDisabled;
+    private ItemStack carefulSmeltNoPermission;
+    private ItemStack carefulSmeltDisabledGlobally;
 
     private Set<Material> fortuneMaterials;
     private Set<Material> itemBlackList;
@@ -76,6 +90,8 @@ public class Settings extends Reloadable {
         this.vkBackpacksSupport = config.getBoolean("config.vkBackPacks support") && vkBpEnabled;
         boolean bBackpacks = Bukkit.getPluginManager().isPluginEnabled("BetterBackpacks");
         this.betterBackpacksSupport = config.getBoolean("config.BetterBackpacks support") && bBackpacks;
+        this.globalCarefulBreakEnabled = config.getBoolean("config.careful break");
+        this.globalCarefulSmeltEnabled = config.getBoolean("config.careful smelt");
 
         String timeString = config.getString("config.time before full inv alert", "0s");
         this.ticksBeforeAlert = TimeUtils.getTicks(
@@ -105,6 +121,16 @@ public class Settings extends Reloadable {
         this.aSMobEnabled = getConfigGUIItem("auto smelt mobs.enabled");
         this.aSMobDisabled = getConfigGUIItem("auto smelt mobs.disabled");
         this.aSMobNoPermission = getConfigGUIItem("auto smelt mobs.no permission");
+
+        this.carefulBreakEnabled = getConfigGUIItem("careful break.enabled");
+        this.carefulBreakDisabled = getConfigGUIItem("careful break.disabled");
+        this.carefulBreakNoPermission = getConfigGUIItem("careful break.no permission");
+        this.carefulBreakDisabledGlobally = getConfigGUIItem("careful break.disabled in config");
+
+        this.carefulSmeltEnabled = getConfigGUIItem("careful smelt.enabled");
+        this.carefulSmeltDisabled = getConfigGUIItem("careful smelt.disabled");
+        this.carefulSmeltNoPermission = getConfigGUIItem("careful smelt.no permission");
+        this.carefulSmeltDisabledGlobally = getConfigGUIItem("careful smelt.disabled in config");
 
         this.fortuneMaterials = new HashSet<>();
         for(String material : config.getStringList("config.fortune.items")){
@@ -218,6 +244,14 @@ public class Settings extends Reloadable {
         return this.betterBackpacksSupport;
     }
 
+    public boolean isGlobalCarefulBreakDisabled() {
+        return !this.globalCarefulBreakEnabled;
+    }
+
+    public boolean isGlobalCarefulSmeltDisabled() {
+        return !this.globalCarefulSmeltEnabled;
+    }
+
 
     public int getTicksBeforeAlert(){
         return this.ticksBeforeAlert;
@@ -230,6 +264,7 @@ public class Settings extends Reloadable {
 
         return (int) (this.r.nextInt((int) (v2-v1+1))+v1);
     }
+
 
     public ItemStack getaPBlockEnabled() {
         return this.aPBlockEnabled;
@@ -291,6 +326,39 @@ public class Settings extends Reloadable {
         return this.aSMobNoPermission;
     }
 
+    public ItemStack getCarefulBreakEnabled() {
+        return this.carefulBreakEnabled;
+    }
+
+    public ItemStack getCarefulBreakDisabled() {
+        return this.carefulBreakDisabled;
+    }
+
+    public ItemStack getCarefulBreakNoPermission() {
+        return this.carefulBreakNoPermission;
+    }
+
+    public ItemStack getCarefulBreakDisabledGlobally() {
+        return this.carefulBreakDisabledGlobally;
+    }
+
+    public ItemStack getCarefulSmeltEnabled() {
+        return this.carefulSmeltEnabled;
+    }
+
+    public ItemStack getCarefulSmeltDisabled() {
+        return this.carefulSmeltDisabled;
+    }
+
+    public ItemStack getCarefulSmeltNoPermission() {
+        return this.carefulSmeltNoPermission;
+    }
+
+    public ItemStack getCarefulSmeltDisabledGlobally() {
+        return this.carefulSmeltDisabledGlobally;
+    }
+
+
     public SoundSettings getSound(AutoPickupSounds sound){
         return this.sounds.get(sound);
     }
@@ -322,6 +390,116 @@ public class Settings extends Reloadable {
     }
 
 
+    public void openToggleGUI(Player player){
+        FileConfiguration config = this.plugin.getConfig();
+        SimpleGUI gui = new SimpleGUI(
+                StringUtils.colorizeString('&', config.getString("config.GUI.title")),
+                9,
+                "MPAutoPickup"
+        );
+
+        AutoPickupSettings settings = this.plugin.getAutoPickupManager().getPlayer(player);
+
+        ItemStack block;
+        ItemStack mob;
+        ItemStack exp;
+        ItemStack smeltBlock;
+        ItemStack smeltMob;
+        ItemStack carefulBreak;
+        ItemStack carefulSmelt;
+
+        if(player.hasPermission("autoPickup.autoPickup.block")){
+            if(settings.autoPickupBlocksEnabled()){
+                block = this.getaPBlockEnabled();
+            }else{
+                block = this.getaPBlockDisabled();
+            }
+        }else{
+            block = this.getaPBlockNoPermission();
+        }
+
+        if(player.hasPermission("autoPickup.autoPickup.mob")){
+            if(settings.autoPickupMobDropsEnabled()){
+                mob = this.getaPMobEnabled();
+            }else{
+                mob = this.getaPMobDisabled();
+            }
+        }else{
+            mob = this.getaPMobNoPermission();
+        }
+
+        if(player.hasPermission("autoPickup.autoPickup.exp")){
+            if(settings.autoPickupExpEnabled()){
+                exp = this.getaPExpEnabled();
+            }else{
+                exp = this.getaPExpDisabled();
+            }
+        }else{
+            exp = this.getaPExpNoPermission();
+        }
+
+        if(player.hasPermission("autoPickup.autoSmelt.blocks")){
+            if(settings.autoSmeltBlocksEnabled()){
+                smeltBlock = this.getaSBlockEnabled();
+            }else{
+                smeltBlock = this.getaSBlockDisabled();
+            }
+        }else{
+            smeltBlock = this.getaSBlockNoPermission();
+        }
+
+        if(player.hasPermission("autoPickup.autoSmelt.mobs")){
+            if(settings.autoSmeltMobEnabled()){
+                smeltMob = this.getaSMobEnabled();
+            }else{
+                smeltMob = this.getaSMobDisabled();
+            }
+        }else{
+            smeltMob = this.getaSMobNoPermission();
+        }
+
+        if(this.globalCarefulBreakEnabled) {
+            if(player.hasPermission("autoPickup.carefulBreak")) {
+                if(settings.carefulBreakEnabled()) {
+                    carefulBreak = this.getCarefulBreakEnabled();
+                } else {
+                    carefulBreak = this.getCarefulBreakDisabled();
+                }
+            } else {
+                carefulBreak = this.getCarefulBreakNoPermission();
+            }
+        }else{
+            carefulBreak = this.getCarefulBreakDisabledGlobally();
+        }
+
+        if(this.globalCarefulSmeltEnabled) {
+            if(player.hasPermission("autoPickup.carefulSmelt")) {
+                if(settings.carefulSmeltEnabled()) {
+                    carefulSmelt = this.getCarefulSmeltEnabled();
+                } else {
+                    carefulSmelt = this.getCarefulSmeltDisabled();
+                }
+            } else {
+                carefulSmelt = this.getCarefulSmeltNoPermission();
+            }
+        }else{
+            carefulSmelt = this.getCarefulSmeltDisabledGlobally();
+        }
+
+
+
+        gui.setItem(0, block);
+        gui.setItem(1, mob);
+        gui.setItem(2, exp);
+        gui.setItem(3, smeltBlock);
+        gui.setItem(4, smeltMob);
+
+        gui.setItem(7, carefulBreak);
+        gui.setItem(8, carefulSmelt);
+
+        gui.openGUI(player);
+
+    }
     /**
      * Sends a message to the console whenever an error when trying to register a sound occurs.
      * @param sound The sound name in config.

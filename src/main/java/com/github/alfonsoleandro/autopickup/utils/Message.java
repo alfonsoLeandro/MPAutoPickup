@@ -16,6 +16,12 @@ public enum Message implements MessageEnum {
     AS_BLOCKS_DISABLED("config.messages.autoSmelt.blocks.disabled","&fBlock drops AutoSmelt &fhas been &cdisabled &ffor you"),
     AS_MOB_ENABLED("config.messages.autoSmelt.mob.enabled","&fMob drops AutoSmelt &fhas been &aenabled &ffor you"),
     AS_MOB_DISABLED("config.messages.autoSmelt.mob.disabled","&fMob drops AutoSmelt &fhas been &cdisabled &ffor you"),
+    CAREFUL_BREAK_ENABLED("config.messages.careful break.enabled","&fCareful break &fhas been &aenabled &ffor you"),
+    CAREFUL_BREAK_DISABLED("config.messages.careful break.disabled","&fCareful break &fhas been &cdisabled &ffor you"),
+    CAREFUL_BREAK_DISABLED_IN_CONFIG("config.messages.careful break.disabled in config","&cCareful break is disabled for this server"),
+    CAREFUL_SMELT_ENABLED("config.messages.careful smelt.enabled","&fCareful smelt &fhas been &aenabled &ffor you"),
+    CAREFUL_SMELT_DISABLED("config.messages.careful smelt.disabled","&fCareful smelt &fhas been &cdisabled &ffor you"),
+    CAREFUL_SMELT_DISABLED_IN_CONFIG("config.messages.careful smelt.disabled in config","&cCareful smelt is disabled for this server"),
 
     CANNOT_CONSOLE("config.messages.cannot send from console", "&cThat command can only be sent by a player"),
     FULL_INV("&cYour inventory is full. &fSome items may be dropped to the ground"),

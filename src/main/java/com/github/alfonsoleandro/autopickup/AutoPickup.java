@@ -27,6 +27,8 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AutoPickup extends ReloaderPlugin {
 
@@ -165,8 +167,8 @@ public class AutoPickup extends ReloaderPlugin {
         this.configYaml = new YamlFile(this, "config.yml");
         if(firstConfig){
             checkLegacyFields();
-            checkForNewFields();
         }
+        checkForNewFields();
     }
 
     /**
@@ -210,9 +212,66 @@ public class AutoPickup extends ReloaderPlugin {
         FileConfiguration actualConfig = YamlConfiguration.loadConfiguration(new File(this.getDataFolder(), "config.yml"));
         FileConfiguration config = getConfig();
 
-        if(!actualConfig.contains("BetterBackpacks support")){
-            config.set("BetterBackpacks support", true);
-            this.configYaml.save(false);
+        Map<String, Object> fields = new HashMap<String, Object>(){{
+            put("config.BetterBackpacks support", true);
+            put("config.careful break", true);
+            put("config.careful smelt", true);
+
+            put("config.default values.careful break", false);
+            put("config.default values.careful smelt", false);
+
+            put("config.GUI.careful break.enabled.item", "DIAMOND_PICKAXE");
+            put("config.GUI.careful break.enabled.name", "&aToggle &ecareful &abreak");
+            put("config.GUI.careful break.enabled.lore",
+                    Arrays.asList("&7Click here to &aenable", "&7careful break", "", "&7This setting makes it so",
+                            "&7you can mine using auto-pickup", "&7only when shifting"));
+            put("config.GUI.careful break.disabled.item", "WOODEN_PICKAXE");
+            put("config.GUI.careful break.disabled.name", "&cToggle &ecareful &cbreak");
+            put("config.GUI.careful break.disabled.lore",
+                    Arrays.asList("&7Click here to &aenable", "&7careful break", "", "&7This setting makes it so",
+                            "&7you can mine using auto-pickup", "&7only when shifting"));
+            put("config.GUI.careful break.no permission.item", "BARRIER");
+            put("config.GUI.careful break.no permission.name", "&cToggle &ecareful &cbreak");
+            put("config.GUI.careful break.no permission.lore",
+                    Arrays.asList("&7Click here to &aenable", "&7careful break", "", "&7This setting makes it so",
+                            "&7you can mine using auto-pickup", "&7only when shifting"));
+            put("config.GUI.careful break.disabled in config.item", "BARRIER");
+            put("config.GUI.careful break.disabled in config.name", "&cToggle &ecareful &cbreak");
+            put("config.GUI.careful break.disabled in config.lore",
+                    Arrays.asList("&7Careful break is disabled", "&7in config", "", "&7This setting makes it so",
+                            "&7you can mine using auto-pickup", "&7only when shifting"));
+
+            put("config.GUI.careful smelt.enabled.item", "FURNACE");
+            put("config.GUI.careful smelt.enabled.name", "&aToggle &ecareful &asmelt");
+            put("config.GUI.careful smelt.enabled.lore",
+                    Arrays.asList("&7Click here to &aenable", "&7careful smelt", "", "&7This setting makes it so",
+                            "&7you can mine using auto-smelt", "&7only when shifting"));
+            put("config.GUI.careful smelt.disabled.item", "STONE");
+            put("config.GUI.careful smelt.disabled.name", "&cToggle &ecareful &csmelt");
+            put("config.GUI.careful smelt.disabled.lore",
+                    Arrays.asList("&7Click here to &aenable", "&7careful smelt", "", "&7This setting makes it so",
+                            "&7you can mine using auto-smelt", "&7only when shifting"));
+            put("config.GUI.careful smelt.no permission.item", "BARRIER");
+            put("config.GUI.careful smelt.no permission.name", "&cToggle &ecareful &csmelt");
+            put("config.GUI.careful smelt.no permission.lore",
+                    Arrays.asList("&7Click here to &aenable", "&7careful smelt", "", "&7This setting makes it so",
+                            "&7you can mine using auto-smelt", "&7only when shifting"));
+            put("config.GUI.careful smelt.disabled in config.item", "BARRIER");
+            put("config.GUI.careful smelt.disabled in config.name", "&cToggle &ecareful &csmelt");
+            put("config.GUI.careful smelt.disabled in config.lore",
+                    Arrays.asList("&7Careful smelt is disabled", "&7in config", "", "&7This setting makes it so",
+                            "&7you can mine using auto-smelt", "&7only when shifting"));
+
+            put("config.messages.careful smelt.enabled", "&fCareful smelt &fhas been &aenabled &ffor you");
+            put("config.messages.careful smelt.disabled", "&fCareful smelt &fhas been &cdisabled &ffor you");
+            put("config.messages.careful smelt.disabled in config", "&cCareful smelt is disabled for this server");
+        }};
+
+        for(String key : fields.keySet()){
+            if(!actualConfig.contains(key)){
+                config.set(key, fields.get(key));
+                this.configYaml.save(false);
+            }
         }
     }
 

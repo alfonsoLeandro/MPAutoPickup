@@ -1,6 +1,14 @@
 # MPAutoPickup by MasterPlugins (lelesape#3612)
 config:
   prefix: '&f[&2MPAutoPickup&f]'
+  # Careful break allows users to enable/disable auto pickup by just shifting.
+  # Only if this setting is set to true and the careful break setting in each player's autopickup setting
+  # is set to true.
+  careful break: true
+  # Careful smelt allows users to enable/disable auto smelt by just shifting.
+  # Only if this setting is set to true and the careful smelt setting in each player's autopickup setting
+  # is set to true.
+  careful smelt: true
   # The priorities for each of the events. The priority modifies the order in which events are listened.
   # You can modify this to your liking so you can adjust what happens and when, say you have another plugin with
   # (for example) custom enchantments that modify block drops, then you will want block break to be highest
@@ -38,13 +46,15 @@ config:
   # It really should not affect server performance, so please do not disable metrics, you can if you really want though.
   # But leaving this in true really helps me, the developer :D
   use metrics: true
-  # The default values for the auto-pickup & auto-smelt settings.
+  # The default values for the auto-pickup, auto-smelt and careful break settings.
   default values:
     autoPickup blocks: false
     autoPickup mobs: false
     autoPickup exp: false
     autoSmelt blocks: false
     autoSmelt mobs: false
+    careful smelt: false
+    careful break: false
   # Sound options for each event
   # Volume and pitch are able to take a range of values to then generate a random
   # value between the two (just like vanilla Minecraft). To do so, instead of just adding a number,
@@ -172,6 +182,88 @@ config:
         lore:
           - '&fYou have no permission'
           - '&fto use mob auto-smelt'
+    careful break:
+      enabled:
+        item: 'DIAMOND_PICKAXE'
+        name: '&aToggle &ecareful &abreak'
+        lore:
+          - '&7Click here to &cdisable'
+          - '&7careful break'
+          - ''
+          - '&7This setting makes it so'
+          - '&7you can mine using auto-pickup'
+          - '&7only when shifting'
+      disabled:
+        item: 'WOODEN_PICKAXE'
+        name: '&cToggle &ecareful &cbreak'
+        lore:
+          - '&7Click here to &aenable'
+          - '&7careful break'
+          - ''
+          - '&7This setting makes it so'
+          - '&7you can mine using auto-pickup'
+          - '&7only when shifting'
+      no permission:
+        item: 'BARRIER'
+        name: '&cToggle &ecareful &cbreak'
+        lore:
+          - '&fYou have no permission'
+          - '&fto use careful break'
+          - ''
+          - '&7This setting makes it so'
+          - '&7you can mine using auto-pickup'
+          - '&7only when shifting'
+      disabled in config:
+        item: 'BARRIER'
+        name: '&cToggle &ecareful &cbreak'
+        lore:
+          - '&fCareful break is disabled'
+          - '&fin config.'
+          - ''
+          - '&7This setting makes it so'
+          - '&7you can mine using auto-pickup'
+          - '&7only when shifting'
+    careful smelt:
+      enabled:
+        item: 'FURNACE'
+        name: '&aToggle &ecareful &asmelt'
+        lore:
+          - '&7Click here to &cdisable'
+          - '&7careful smelt'
+          - ''
+          - '&7This setting makes it so'
+          - '&7you can mine using auto-smelt'
+          - '&7only when shifting'
+      disabled:
+        item: 'STONE'
+        name: '&cToggle &ecareful &csmelt'
+        lore:
+          - '&7Click here to &aenable'
+          - '&7careful smelt'
+          - ''
+          - '&7This setting makes it so'
+          - '&7you can mine using auto-smelt'
+          - '&7only when shifting'
+      no permission:
+        item: 'BARRIER'
+        name: '&cToggle &ecareful &csmelt'
+        lore:
+          - '&fYou have no permission'
+          - '&fto use careful smelt'
+          - ''
+          - '&7This setting makes it so'
+          - '&7you can mine using auto-smelt'
+          - '&7only when shifting'
+      disabled in config:
+        item: 'BARRIER'
+        name: '&cToggle &ecareful &csmelt'
+        lore:
+          - '&fCareful smelt is disabled'
+          - '&fin config.'
+          - ''
+          - '&7This setting makes it so'
+          - '&7you can mine using auto-smelt'
+          - '&7only when shifting'
   # A list of items that a player will not be able to auto pickup (block or mob drops)
   # Default: an empty list. Before adding any item type here, remember to remove the
   # empty braces ([]), these represent an empty list.
@@ -257,3 +349,11 @@ config:
     placeholder status:
       enabled: '&aEnabled'
       disabled: '&cDisabled'
+    careful break:
+      enabled: '&fCareful break &fhas been &aenabled &ffor you'
+      disabled: '&fCareful break &fhas been &cdisabled &ffor you'
+      disabled in config: '&cCareful break is disabled for this server'
+    careful smelt:
+      enabled: '&fCareful smelt &fhas been &aenabled &ffor you'
+      disabled: '&fCareful smelt &fhas been &cdisabled &ffor you'
+      disabled in config: '&cCareful smelt is disabled for this server'

@@ -39,7 +39,9 @@ public class AutoPickupManager {
                     players.getBoolean("players."+playerName+".mob"),
                     players.getBoolean("players."+playerName+".exp"),
                     players.getBoolean("players."+playerName+".smelt blocks"),
-                    players.getBoolean("players."+playerName+".smelt mobs")
+                    players.getBoolean("players."+playerName+".smelt mobs"),
+                    players.getBoolean("players."+playerName+".careful break"),
+                    players.getBoolean("players."+playerName+".careful smelt")
             ));
         }else{
             FileConfiguration config = this.plugin.getConfig();
@@ -48,7 +50,9 @@ public class AutoPickupManager {
                     config.getBoolean("config.default values.autoPickup mobs"),
                     config.getBoolean("config.default values.autoPickup exp"),
                     config.getBoolean("config.default values.autoSmelt blocks"),
-                    config.getBoolean("config.default values.autoSmelt mobs")
+                    config.getBoolean("config.default values.autoSmelt mobs"),
+                    config.getBoolean("config.default values.careful break"),
+                    config.getBoolean("config.default values.careful smelt")
             ));
         }
 
@@ -64,6 +68,8 @@ public class AutoPickupManager {
         players.set("players."+playerName+".exp", settings.autoPickupExpEnabled());
         players.set("players."+playerName+".smelt blocks", settings.autoSmeltBlocksEnabled());
         players.set("players."+playerName+".smelt mobs", settings.autoSmeltMobEnabled());
+        players.set("players."+playerName+".careful break", settings.carefulBreakEnabled());
+        players.set("players."+playerName+".careful smelt", settings.carefulSmeltEnabled());
 
         this.plugin.getPlayersYaml().save(async);
     }

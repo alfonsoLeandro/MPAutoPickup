@@ -37,6 +37,9 @@ permissions:
   autoPickup.autoSmelt.mobs:
     description: Allows a player to autosmelt.
     default: op
+  autoPickup.carefulBreak:
+    description: Allows a player to use carefulBreak.
+    default: op
   autoPickup.autoPickup.*:
     description: Gives permission to every autoPickup type.
     default: op
@@ -58,3 +61,4 @@ permissions:
       autoPickup.reload: true
       autoPickup.autoPickup.*: true
       autoPickup.autoSmelt.*: true
+      autoPickup.carefulBreak: true

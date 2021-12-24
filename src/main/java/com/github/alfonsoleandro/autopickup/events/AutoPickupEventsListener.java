@@ -101,12 +101,18 @@ public class AutoPickupEventsListener implements Listener, EventExecutor {
 
 
         //Apply autoSmelt
-        if(playerSettings.autoSmeltBlocksEnabled()){
+        if(playerSettings.autoSmeltBlocksEnabled()
+                && (player.isSneaking() ||
+                this.settings.isGlobalCarefulSmeltDisabled() ||
+                !playerSettings.carefulSmeltEnabled())){
             applyAutoSmelt(drops);
         }
 
         //Finally, auto pickup or drop items
-        if(playerSettings.autoPickupBlocksEnabled() && !this.settings.getBlockBlackList().contains(block.getType())){
+        if(playerSettings.autoPickupBlocksEnabled() && !this.settings.getBlockBlackList().contains(block.getType())
+                && (player.isSneaking() ||
+                this.settings.isGlobalCarefulBreakDisabled() ||
+                !playerSettings.carefulBreakEnabled())){
             autoPickup(drops, player, Settings.AutoPickupSounds.BLOCKS);
         }else{
             Location loc = event.getBlock().getLocation();
@@ -156,12 +162,19 @@ public class AutoPickupEventsListener implements Listener, EventExecutor {
         event.getDrops().clear();
 
         //Apply autoSmelt
-        if(playerSettings.autoSmeltMobEnabled()){
+        if(playerSettings.autoSmeltMobEnabled()
+                && (player.isSneaking() ||
+                this.settings.isGlobalCarefulSmeltDisabled() ||
+                !playerSettings.carefulSmeltEnabled())){
             applyAutoSmelt(drops);
         }
 
-        //Finally auto pickup or drop items
-        if(playerSettings.autoPickupMobDropsEnabled() && !this.settings.getEntityBlackList().contains(event.getEntityType())){
+        //Finally, auto pickup or drop items
+        if(playerSettings.autoPickupMobDropsEnabled() &&
+                !this.settings.getEntityBlackList().contains(event.getEntityType())
+                && (player.isSneaking() ||
+                this.settings.isGlobalCarefulBreakDisabled() ||
+                !playerSettings.carefulBreakEnabled())){
             autoPickup(drops, player, Settings.AutoPickupSounds.MOBS);
         }else{
             Location loc = event.getEntity().getLocation();
