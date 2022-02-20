@@ -32,6 +32,6 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.vk2gpz.vkbackpack:VKBackPack:8.2.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: me.clip:placeholderapi:2.10.9" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.jetbrains:annotations:19.0.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.alonsoaliaga:BetterBackpacks:4.0.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.alonsoaliaga:BetterBackpacks:1.2.2-BETA" level="project" />
   </component>
 </module>

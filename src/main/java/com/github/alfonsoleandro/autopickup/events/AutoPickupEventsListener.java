@@ -10,6 +10,8 @@ import com.github.alfonsoleandro.mputils.managers.MessageSender;
 import com.vk2gpz.vkbackpack.VKBackPack;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.type.Snow;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
@@ -18,6 +20,7 @@ import org.bukkit.event.*;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerItemBreakEvent;
+import org.bukkit.event.player.PlayerStatisticIncrementEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -56,7 +59,7 @@ public class AutoPickupEventsListener implements Listener, EventExecutor {
     public void onPlayerBreakBlock(BlockBreakEvent event){
         Player player = event.getPlayer();
         if(!player.getGameMode().equals(GameMode.SURVIVAL)) return;
-        if(this.serverVersionDiscriminant > 8 && !event.isDropItems()) return;
+        if(this.serverVersionDiscriminant > 11 && !event.isDropItems()) return;
 
 
         AutoPickupSettings playerSettings = this.apm.getPlayer(player);
@@ -74,6 +77,13 @@ public class AutoPickupEventsListener implements Listener, EventExecutor {
             drops = block.getDrops(new ItemStack(inHand.getType()));
             applySilkTouch(drops, inHand, block);
             applyFortune(drops, inHand);
+        }
+
+        //tested in 1.8(DONE, no need), 1.10(DONE, NO NEED), 1.11(DONE, NO NEED),
+        // 1.12.2(NEEDS), 1.13(NEEDS) and 1.16(NEEDS)
+        //Adds adjacent blocks that break when the block they are holding on to breaks, to the dropped items
+        if(this.serverVersionDiscriminant > 11) {
+            addAdjacentBlocks(drops, block);
         }
 
         //Check for blocks that have two parts.
@@ -96,7 +106,9 @@ public class AutoPickupEventsListener implements Listener, EventExecutor {
                     ((Snow)block.getBlockData()).getLayers()
                     :
                     block.getData()+1;
-            drops.add(new ItemStack(Material.SNOWBALL, layers));
+            drops.add(new ItemStack(this.serverVersionDiscriminant >= 13 ?
+                    Material.SNOWBALL : Material.valueOf("SNOW_BALL"),
+                    layers));
         }
 
 
@@ -131,21 +143,30 @@ public class AutoPickupEventsListener implements Listener, EventExecutor {
 
         //Prevent non wanted drops and add statistics
         addMineBlockStatistics(player, block.getType());
-        if(this.serverVersionDiscriminant > 9) {
+        if(this.serverVersionDiscriminant > 11) {
             event.setDropItems(false);
         }else {
             event.setCancelled(true);
             event.getBlock().getLocation().getBlock().setType(Material.AIR);
-            if(!inHand.containsEnchantment(Enchantment.DURABILITY) || (this.r.nextInt(inHand.getEnchantmentLevel(Enchantment.DURABILITY)) > this.r.nextInt(2))){
-                inHand.setDurability((short) (inHand.getDurability()+1));
-            }
-            if(inHand.getDurability() > inHand.getType().getMaxDurability()){
-                // "After this event, the item's amount will be set to item amount - 1
-                // and its durability will be reset to 0."
-                PlayerItemBreakEvent itemBreakEvent = new PlayerItemBreakEvent(player, inHand);
-                Bukkit.getPluginManager().callEvent(itemBreakEvent);
-                inHand.setAmount(inHand.getAmount()-1);
-                inHand.setDurability((short) 0);
+            String type = inHand.getType().toString();
+            if(type.contains("SWORD") ||
+                    type.contains("AXE") ||
+                    type.contains("SHOVEL")
+                    || type.equalsIgnoreCase("SHEARS")) {
+                if(!inHand.containsEnchantment(Enchantment.DURABILITY) || (this.r.nextInt(inHand.getEnchantmentLevel(Enchantment.DURABILITY)) > this.r.nextInt(2))) {
+                    inHand.setDurability((short) (inHand.getDurability() + 1));
+                }
+                if(inHand.getDurability() > inHand.getType().getMaxDurability()) {
+                    // "After this event, the item's amount will be set to item amount - 1
+                    // and its durability will be reset to 0."
+                    PlayerItemBreakEvent itemBreakEvent = new PlayerItemBreakEvent(player, inHand);
+                    Bukkit.getPluginManager().callEvent(itemBreakEvent);
+                    inHand.setDurability((short) 0);
+                    inHand.setAmount(inHand.getAmount() - 1);
+                    if(inHand.getAmount() <= 0) {
+                        player.getInventory().setItem(player.getInventory().getHeldItemSlot(), null);
+                    }
+                }
             }
         }
 
@@ -289,6 +310,137 @@ public class AutoPickupEventsListener implements Listener, EventExecutor {
         Objects.requireNonNull(loc.getWorld()).dropItemNaturally(loc, item);
     }
 
+    /**
+     * Adds some adjacent blocks attached to the broken block to the drops list.
+     * For example: torches, ladders, etc.
+     * @param drops The list of drops.
+     * @param block The broken block.
+     */
+    @SuppressWarnings("deprecation") //block data in 1.12-
+    private void addAdjacentBlocks(Collection<ItemStack> drops, Block block){
+        for(BlockFace face : new BlockFace[]{BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN}) {
+            Block relative = block.getRelative(face);
+            String type = relative.getType().toString();
+            if(type.contains("AIR")) continue;
+            if(face.equals(BlockFace.UP)) {
+                if(type.contains("TORCH") || type.contains("SAPLING") || type.contains("GRASS")
+                        || type.contains("FERN") || type.contains("BUSH") || type.contains("PICKLE")
+                        || type.contains("DANDELION") || type.contains("POPPY") || type.contains("ORCHID")
+                        || type.contains("ALLIUM") || type.contains("BLUET") || type.contains("TULIP")
+                        || type.contains("DAISY") || type.contains("LILY") || type.contains("ROSE")
+                        || type.contains("RAIL") || type.contains("FLOWER") || type.contains("ROOTS")
+                        || type.contains("CARPET") || type.contains("LILAC") || type.contains("PEONY")
+                        || type.equalsIgnoreCase("REDSTONE") || type.contains("LEVER")
+                        || type.contains("REPEATER") || type.contains("COMPARATOR") || type.contains("BUTTON")
+                        || type.contains("PRESSURE") || type.contains("DOOR") || type.contains("BANNER")
+                        || type.contains("BELL") || type.contains("LANTERN")) {
+                    if(type.contains("WALL")) continue;
+                    if(type.contains("BLOCK")) continue;
+                    if(type.contains("HANGING")) continue;
+                    if(type.contains("TRAPDOOR")) continue;
+                    drops.addAll(relative.getDrops());
+
+                }else if(type.contains("CLUSTER")){
+                    //It's okay to use block data here because amethysts clusters are only 1.18+
+                    if(!((Directional) relative.getBlockData()).getFacing().equals(face)) continue;
+                    drops.addAll(relative.getDrops());
+                }
+
+            }else if(face.equals(BlockFace.DOWN)){
+                if(type.contains("BLOSSOM") || type.contains("HANGING")){
+                    drops.addAll(relative.getDrops());
+                }
+
+            } else {
+                if(type.contains("TORCH") || type.contains("SIGN") || type.contains("BANNER")
+                        || type.contains("FAN") || type.contains("LADDER") || type.contains("TRIPWIRE")
+                        || type.contains("BUTTON") || type.contains("LEVER")) {
+                    if(this.serverVersionDiscriminant < 13){
+                        byte data = relative.getData();
+                        if(type.contains("TORCH") || type.contains("BUTTON") || type.contains("LEVER")) {
+                            switch (face){
+                                case EAST:
+                                    if(data == 1 || data == 9){
+                                        drops.addAll(relative.getDrops());
+                                    }
+                                    break;
+                                case WEST:
+                                    if(data == 2 || data == 10){
+                                        drops.addAll(relative.getDrops());
+                                    }
+                                    break;
+                                case SOUTH:
+                                    if(data == 3 || data == 11){
+                                        drops.addAll(relative.getDrops());
+                                    }
+                                    break;
+                                case NORTH:
+                                    if(data == 4 || data == 12){
+                                        drops.addAll(relative.getDrops());
+                                    }
+                                    break;
+                            }
+
+
+                        }else if(type.contains("SIGN") || type.contains("BANNER") || type.contains("LADDER")){
+                            if(!type.contains("WALL")) continue;
+                            switch (face){
+                                case EAST:
+                                    if(data == 5){
+                                        drops.addAll(relative.getDrops());
+                                    }
+                                    break;
+                                case WEST:
+                                    if(data == 4){
+                                        drops.addAll(relative.getDrops());
+                                    }
+                                    break;
+                                case SOUTH:
+                                    if(data == 3){
+                                        drops.addAll(relative.getDrops());
+                                    }
+                                    break;
+                                case NORTH:
+                                    if(data == 2){
+                                        drops.addAll(relative.getDrops());
+                                    }
+                                    break;
+                            }
+                        }else if(type.contains("TRIPWIRE")){
+                            switch (face){
+                                case EAST:
+                                    if(data == 3 || data == 7 || data == 15){
+                                        drops.addAll(relative.getDrops());
+                                    }
+                                    break;
+                                case WEST:
+                                    if(data == 1 || data == 5 || data == 13){
+                                        drops.addAll(relative.getDrops());
+                                    }
+                                    break;
+                                case SOUTH:
+                                    if(data == 0 || data == 4 || data == 12){
+                                        drops.addAll(relative.getDrops());
+                                    }
+                                    break;
+                                case NORTH:
+                                    if(data == 2 || data == 6 || data == 14){
+                                        drops.addAll(relative.getDrops());
+                                    }
+                                    break;
+                            }
+
+                        }
+                    }else {
+                        if(!type.contains("WALL") || !((Directional) relative.getBlockData()).getFacing().equals(face))
+                            continue;
+                        drops.addAll(relative.getDrops());
+                    }
+                }
+            }
+        }
+    }
+
 
     /**
      * Checks if the player has an empty space for a given item to fit in.
@@ -347,7 +499,14 @@ public class AutoPickupEventsListener implements Listener, EventExecutor {
         if(type.equals(Material.AIR)) return;
         if(this.materialsWithoutStatistics.contains(type)) return;
         try {
+            int previous = player.getStatistic(Statistic.MINE_BLOCK, type);
+            PlayerStatisticIncrementEvent statisticEvent =
+                    new PlayerStatisticIncrementEvent(player, Statistic.MINE_BLOCK,
+                            previous, previous + 1, type);
+            Bukkit.getPluginManager().callEvent(statisticEvent);
+            if(statisticEvent.isCancelled()) return;
             player.setStatistic(Statistic.MINE_BLOCK, type, player.getStatistic(Statistic.MINE_BLOCK, type) + 1);
+
         }catch (IllegalArgumentException e){
             this.materialsWithoutStatistics.add(type);
         }

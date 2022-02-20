@@ -65,6 +65,10 @@
 
     <repositories>
         <repository>
+            <id>maven-central</id>
+            <url>https://repo1.maven.org/maven2/</url>
+        </repository>
+        <repository>
             <id>spigotmc-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
@@ -87,6 +91,8 @@
             <version>1.9.3</version>
             <scope>provided</scope>
         </dependency>
+
+<!--        Locally installed jar-->
         <dependency>
             <groupId>com.vk2gpz.vkbackpack</groupId>
             <artifactId>VKBackPack</artifactId>
@@ -99,10 +105,12 @@
             <version>2.10.9</version>
             <scope>provided</scope>
         </dependency>
+
+<!--        Locally installed jar-->
         <dependency>
             <groupId>com.alonsoaliaga</groupId>
             <artifactId>BetterBackpacks</artifactId>
-            <version>4.0.0</version>
+            <version>1.2.2-BETA</version>
             <scope>provided</scope>
         </dependency>
 <!--        <dependency>-->

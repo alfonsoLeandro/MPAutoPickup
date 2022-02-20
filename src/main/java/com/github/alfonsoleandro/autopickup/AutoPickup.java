@@ -184,14 +184,17 @@ public class AutoPickup extends ReloaderPlugin {
      * Checks for server version to adjust some version sensible fields like sounds names.
      */
     private void checkLegacyFields(){
-        FileConfiguration config = getConfig();
+        FileConfiguration config = getConfigYaml().getAccess();
         if(this.serverVersionDiscriminant < 9) {
             config.set("config.sound.block.sound name", "ITEM_PICKUP");
             config.set("config.sound.mob.sound name", "ITEM_PICKUP");
             config.set("config.sound.exp.sound name", "ORB_PICKUP");
             config.set("config.sound.full inv.sound name", "VILLAGER_NO");
+
+            getConfigYaml().save(false);
         }
         if(this.serverVersionDiscriminant < 13) {
+            config.set("config.GUI.careful break.disabled.item", "WOOD_PICKAXE");
 
             config.set("config.GUI.auto pickup mob drops.enabled.item", "SKULL_ITEM");
             config.set("config.GUI.auto pickup mob drops.disabled.item", "SKULL_ITEM");
@@ -200,7 +203,7 @@ public class AutoPickup extends ReloaderPlugin {
             config.set("config.GUI.auto pickup exp.disabled.item", "EXP_BOTTLE");
 
             config.set("config.silk touch.blocks.GRASS_BLOCK", null);
-            getConfigYaml().save(true);
+            getConfigYaml().save(false);
         }
 
     }
