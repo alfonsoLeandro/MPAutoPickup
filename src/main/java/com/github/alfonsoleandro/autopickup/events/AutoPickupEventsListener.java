@@ -15,9 +15,11 @@ import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.type.Snow;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.*;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.event.player.PlayerStatisticIncrementEvent;
@@ -30,7 +32,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class AutoPickupEventsListener implements Listener, EventExecutor {
 
@@ -60,6 +61,7 @@ public class AutoPickupEventsListener implements Listener, EventExecutor {
         Player player = event.getPlayer();
         if(!player.getGameMode().equals(GameMode.SURVIVAL)) return;
         if(this.serverVersionDiscriminant > 11 && !event.isDropItems()) return;
+        if(this.settings.getBlockBlackList().contains(event.getBlock().getType())) return;
 
 
         AutoPickupSettings playerSettings = this.apm.getPlayer(player);
@@ -72,16 +74,19 @@ public class AutoPickupEventsListener implements Listener, EventExecutor {
 
         //Apply enchantments
         if(this.settings.isUseVanillaEnchantments()){
-            drops = block.getDrops(inHand);
+//            drops = block.getDrops(inHand);
+            // Trigger the event that would trigger if AutoPickup weren't enabled on the server
+            drops = triggerBlockDropItemEvent(block, player, block.getDrops(inHand).stream().toList());
         }else{
-            drops = block.getDrops(new ItemStack(inHand.getType()));
+            // Trigger the event that would trigger if AutoPickup weren't enabled on the server
+            drops = triggerBlockDropItemEvent(block, player, block.getDrops(new ItemStack(inHand.getType())).stream().toList());
             applySilkTouch(drops, inHand, block);
             applyFortune(drops, inHand);
         }
 
-        //tested in 1.8(DONE, no need), 1.10(DONE, NO NEED), 1.11(DONE, NO NEED),
+        // Tested in: 1.8(DONE, no need), 1.10(DONE, NO NEED), 1.11(DONE, NO NEED),
         // 1.12.2(NEEDS), 1.13(NEEDS) and 1.16(NEEDS)
-        //Adds adjacent blocks that break when the block they are holding on to breaks, to the dropped items
+        // Adds adjacent blocks that break when the block they are holding on to breaks, to the dropped items
         if(this.serverVersionDiscriminant > 11) {
             addAdjacentBlocks(drops, block);
         }
@@ -95,7 +100,7 @@ public class AutoPickupEventsListener implements Listener, EventExecutor {
         //Check if block has items in it.
         if(block.getState() instanceof InventoryHolder && !(block.getType().toString().contains("SHULKER"))) {
             Inventory blockInv = ((InventoryHolder) block.getState()).getInventory();
-            drops.addAll(Arrays.stream(blockInv.getContents()).filter(Objects::nonNull).collect(Collectors.toList()));
+            drops.addAll(Arrays.stream(blockInv.getContents()).filter(Objects::nonNull).toList());
             blockInv.clear();
             block.getState().update();
         }
@@ -121,7 +126,8 @@ public class AutoPickupEventsListener implements Listener, EventExecutor {
         }
 
         //Finally, auto pickup or drop items
-        if(playerSettings.autoPickupBlocksEnabled() && !this.settings.getBlockBlackList().contains(block.getType())
+        if(playerSettings.autoPickupBlocksEnabled() &&
+                !this.settings.getBlockBlackList().contains(block.getType())
                 && (player.isSneaking() ||
                 this.settings.isGlobalCarefulBreakDisabled() ||
                 !playerSettings.carefulBreakEnabled())){
@@ -143,6 +149,7 @@ public class AutoPickupEventsListener implements Listener, EventExecutor {
 
         //Prevent non wanted drops and add statistics
         addMineBlockStatistics(player, block.getType());
+
         if(this.serverVersionDiscriminant > 11) {
             event.setDropItems(false);
         }else {
@@ -545,6 +552,24 @@ public class AutoPickupEventsListener implements Listener, EventExecutor {
         return this.alertedPlayers.contains(player.getName());
     }
 
+    /**
+     * Calls the {@link BlockDropItemEvent} that was going to be called by the {@link BlockBreakEvent} but wasn't,
+     * because the block break was cancelled, or items were not dropped.
+     * @param block The block that caused the event.
+     * @param player The player breaking the block.
+     * @param drops The list of dropped items.
+     */
+    private List<ItemStack> triggerBlockDropItemEvent(Block block, Player player, List<ItemStack> drops){
+        List<Item> items = new ArrayList<>();
+        for(ItemStack drop : drops){
+            Item dropped = block.getWorld().dropItem(block.getLocation(), drop);
+            dropped.remove();
+            items.add(dropped);
+        }
+        BlockDropItemEvent blockDropItemEvent = new BlockDropItemEvent(block, block.getState(), player, items);
+        Bukkit.getPluginManager().callEvent(blockDropItemEvent);
+        return blockDropItemEvent.getItems().stream().map(Item::getItemStack).toList();
+    }
 
     @Override
     public void execute(@NotNull Listener listener, @NotNull Event event) {
