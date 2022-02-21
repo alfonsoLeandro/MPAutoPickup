@@ -23,6 +23,9 @@ config:
     entity death: HIGHEST
   # Whether to use the custom silk touch and fortune drops or use the vanilla ones
   use vanilla enchantments: true
+  # Whether to remove from existence the items that were going to be picked up by a player, or just drop them to the
+  # floor.
+  remove items when full inv: false
   # Whether to auto-pickup the items a player drops when killed.
   auto pickup player drops: false
   # Should items try to be auto-picked up to a player's VKBackPack?
@@ -345,6 +348,7 @@ config:
         enabled: '&fMob drops AutoSmelt &fhas been &aenabled &ffor you'
         disabled: '&fMob drops AutoSmelt &fhas been &cdisabled &ffor you'
     full inv: '&cYour inventory is full. &fSome items may be dropped to the ground'
+    full inv items removed: '&cYour inventory is full. &fSome items may be &lremoved'
     cannot send from console: '&cThat command can only be sent by a player'
     placeholder status:
       enabled: '&aEnabled'

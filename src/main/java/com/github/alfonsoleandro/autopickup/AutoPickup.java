@@ -220,6 +220,8 @@ public class AutoPickup extends ReloaderPlugin {
             put("config.careful break", true);
             put("config.careful smelt", true);
 
+            put("config.remove items when full inv", false);
+
             put("config.default values.careful break", false);
             put("config.default values.careful smelt", false);
 

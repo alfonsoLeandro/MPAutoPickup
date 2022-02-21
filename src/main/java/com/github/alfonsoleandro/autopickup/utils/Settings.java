@@ -33,6 +33,7 @@ public class Settings extends Reloadable {
     private boolean betterBackpacksSupport;
     private boolean globalCarefulBreakEnabled;
     private boolean globalCarefulSmeltEnabled;
+    private boolean removeItemsWhenFullInv;
 
     private int ticksBeforeAlert;
 
@@ -92,6 +93,7 @@ public class Settings extends Reloadable {
         this.betterBackpacksSupport = config.getBoolean("config.BetterBackpacks support") && bBackpacks;
         this.globalCarefulBreakEnabled = config.getBoolean("config.careful break");
         this.globalCarefulSmeltEnabled = config.getBoolean("config.careful smelt");
+        this.removeItemsWhenFullInv = config.getBoolean("config.remove items when full inv");
 
         String timeString = config.getString("config.time before full inv alert", "0s");
         this.ticksBeforeAlert = TimeUtils.getTicks(
@@ -250,6 +252,10 @@ public class Settings extends Reloadable {
 
     public boolean isGlobalCarefulSmeltDisabled() {
         return !this.globalCarefulSmeltEnabled;
+    }
+
+    public boolean isRemoveItemsWhenFullInv() {
+        return this.removeItemsWhenFullInv;
     }
 
 

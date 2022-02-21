@@ -25,6 +25,7 @@ public enum Message implements MessageEnum {
 
     CANNOT_CONSOLE("config.messages.cannot send from console", "&cThat command can only be sent by a player"),
     FULL_INV("&cYour inventory is full. &fSome items may be dropped to the ground"),
+    FULL_INV_ITEMS_REMOVED("&cYour inventory is full. &fSome items may be &lremoved"),
     NO_PERMISSION("&cNo permission"),
     PLACEHOLDER_ENABLED("config.messages.placeholder status.enabled", "&aEnabled"),
     PLACEHOLDER_DISABLED("config.messages.placeholder status.disabled", "&cDisabled"),

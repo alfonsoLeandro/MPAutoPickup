@@ -153,7 +153,9 @@ public class AutoPickupEventsListener implements Listener, EventExecutor {
                     type.contains("AXE") ||
                     type.contains("SHOVEL")
                     || type.equalsIgnoreCase("SHEARS")) {
-                if(!inHand.containsEnchantment(Enchantment.DURABILITY) || (this.r.nextInt(inHand.getEnchantmentLevel(Enchantment.DURABILITY)) > this.r.nextInt(2))) {
+                //Durability the way Minecraft implements it
+                if(!inHand.containsEnchantment(Enchantment.DURABILITY) ||
+                        (100/(inHand.getEnchantmentLevel(Enchantment.DURABILITY)+1)) > this.r.nextInt(100)) {
                     inHand.setDurability((short) (inHand.getDurability() + 1));
                 }
                 if(inHand.getDurability() > inHand.getType().getMaxDurability()) {
@@ -285,7 +287,7 @@ public class AutoPickupEventsListener implements Listener, EventExecutor {
                 }
             }else{
                 addedAll = false;
-                dropItem(item, player.getLocation());
+                if(!this.settings.isRemoveItemsWhenFullInv()) dropItem(item, player.getLocation());
             }
         }
 
@@ -293,7 +295,8 @@ public class AutoPickupEventsListener implements Listener, EventExecutor {
             playSound(player, sound);
         }else{
             if(!playerHasBeenAlerted(player)){
-                this.messageSender.send(player, Message.FULL_INV);
+                this.messageSender.send(player, this.settings.isRemoveItemsWhenFullInv()
+                        ? Message.FULL_INV_ITEMS_REMOVED : Message.FULL_INV);
                 playSound(player, Settings.AutoPickupSounds.FULL_INV);
                 addAlertedPlayer(player.getName());
             }
