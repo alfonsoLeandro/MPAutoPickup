@@ -2,7 +2,7 @@ package com.github.alfonsoleandro.autopickup;
 
 import com.github.alfonsoleandro.autopickup.commands.MainCommand;
 import com.github.alfonsoleandro.autopickup.commands.MainCommandTabCompleter;
-import com.github.alfonsoleandro.autopickup.events.*;
+import com.github.alfonsoleandro.autopickup.listeners.*;
 import com.github.alfonsoleandro.autopickup.managers.AutoPickupManager;
 import com.github.alfonsoleandro.autopickup.utils.Message;
 import com.github.alfonsoleandro.autopickup.utils.PAPIPlaceholders;
@@ -215,7 +215,7 @@ public class AutoPickup extends ReloaderPlugin {
         FileConfiguration actualConfig = YamlConfiguration.loadConfiguration(new File(this.getDataFolder(), "config.yml"));
         FileConfiguration config = getConfig();
 
-        Map<String, Object> fields = new HashMap<String, Object>(){{
+        Map<String, Object> fields = new HashMap<>(){{
             put("config.BetterBackpacks support", true);
             put("config.careful break", true);
             put("config.careful smelt", true);

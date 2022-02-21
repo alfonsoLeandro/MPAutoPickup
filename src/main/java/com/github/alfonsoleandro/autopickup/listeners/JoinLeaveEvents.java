@@ -1,4 +1,4 @@
-package com.github.alfonsoleandro.autopickup.events;
+package com.github.alfonsoleandro.autopickup.listeners;
 
 import com.github.alfonsoleandro.autopickup.AutoPickup;
 import com.github.alfonsoleandro.autopickup.utils.Message;

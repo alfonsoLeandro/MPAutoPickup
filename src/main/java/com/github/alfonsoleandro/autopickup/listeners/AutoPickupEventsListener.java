@@ -1,4 +1,4 @@
-package com.github.alfonsoleandro.autopickup.events;
+package com.github.alfonsoleandro.autopickup.listeners;
 
 import com.github.alfonsoleandro.autopickup.AutoPickup;
 import com.github.alfonsoleandro.autopickup.managers.AutoPickupManager;
@@ -74,7 +74,6 @@ public class AutoPickupEventsListener implements Listener, EventExecutor {
 
         //Apply enchantments
         if(this.settings.isUseVanillaEnchantments()){
-//            drops = block.getDrops(inHand);
             // Trigger the event that would trigger if AutoPickup weren't enabled on the server
             drops = triggerBlockDropItemEvent(block, player, block.getDrops(inHand).stream().toList());
         }else{

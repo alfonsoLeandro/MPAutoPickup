@@ -1,4 +1,4 @@
-package com.github.alfonsoleandro.autopickup.events;
+package com.github.alfonsoleandro.autopickup.listeners;
 
 import com.alonsoaliaga.betterbackpacks.api.events.BackpackOpenEvent;
 import com.alonsoaliaga.betterbackpacks.others.BackpackHolder;
@@ -46,9 +46,8 @@ public class BetterBackpacksListener implements Listener {
                 if(!(holder instanceof BackpackHolder)) return;
                 if(((BackpackHolder)holder).getType() != 3) return;
 
-                List<Entity> items = player.getNearbyEntities(1.1,1.1,1.1).stream()
-                        .filter(e -> e instanceof Item)
-                        .collect(Collectors.toList());
+                List<Entity> items = player.getNearbyEntities(1.1, 1.1, 1.1).stream()
+                        .filter(e -> e instanceof Item).toList();
 
                 for(Entity entity : items){
                     Item item = (Item)entity;
