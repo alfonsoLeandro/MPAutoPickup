@@ -37,7 +37,7 @@ public class GUIClickListener implements Listener {
 
 
         if(clickedSlot == 0){
-            if(player.hasPermission("autoPickup.autoPickup.block")) {
+            if(player.hasPermission("autoPickup.autoPickup.blocks")) {
                 boolean wasEnabled = settings.autoPickupBlocksEnabled();
                 settings.setAutoPickupBlocks(!wasEnabled);
                 this.messageSender.send(player, wasEnabled ? Message.AP_BLOCKS_DISABLED : Message.AP_BLOCKS_ENABLED);
@@ -47,7 +47,7 @@ public class GUIClickListener implements Listener {
             }
 
         }else if(clickedSlot == 1){
-            if(player.hasPermission("autoPickup.autoPickup.mob")) {
+            if(player.hasPermission("autoPickup.autoPickup.mobs")) {
                 boolean wasEnabled = settings.autoPickupMobDropsEnabled();
                 settings.setAutoPickupMobDrops(!wasEnabled);
                 this.messageSender.send(player, wasEnabled ? Message.AP_MOB_DISABLED : Message.AP_MOB_ENABLED);
@@ -77,7 +77,7 @@ public class GUIClickListener implements Listener {
             }
 
         }else if(clickedSlot == 4){
-            if(player.hasPermission("autoPickup.autoSmelt.mob")) {
+            if(player.hasPermission("autoPickup.autoSmelt.mobs")) {
                 boolean wasEnabled = settings.autoSmeltMobEnabled();
                 settings.setAutoSmeltMobs(!wasEnabled);
                 this.messageSender.send(player, wasEnabled ? Message.AS_MOB_DISABLED : Message.AS_MOB_ENABLED);

@@ -414,7 +414,7 @@ public class Settings extends Reloadable {
         ItemStack carefulBreak;
         ItemStack carefulSmelt;
 
-        if(player.hasPermission("autoPickup.autoPickup.block")){
+        if(player.hasPermission("autoPickup.autoPickup.blocks")){
             if(settings.autoPickupBlocksEnabled()){
                 block = this.getaPBlockEnabled();
             }else{
@@ -424,7 +424,7 @@ public class Settings extends Reloadable {
             block = this.getaPBlockNoPermission();
         }
 
-        if(player.hasPermission("autoPickup.autoPickup.mob")){
+        if(player.hasPermission("autoPickup.autoPickup.mobs")){
             if(settings.autoPickupMobDropsEnabled()){
                 mob = this.getaPMobEnabled();
             }else{
