@@ -32,6 +32,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class AutoPickupEventsListener implements Listener, EventExecutor {
 
@@ -75,10 +76,11 @@ public class AutoPickupEventsListener implements Listener, EventExecutor {
         //Apply enchantments
         if(this.settings.isUseVanillaEnchantments()){
             // Trigger the event that would trigger if AutoPickup weren't enabled on the server
-            drops = triggerBlockDropItemEvent(block, player, block.getDrops(inHand).stream().toList());
+            drops = triggerBlockDropItemEvent(block, player, new ArrayList<>(block.getDrops(inHand)));
         }else{
             // Trigger the event that would trigger if AutoPickup weren't enabled on the server
-            drops = triggerBlockDropItemEvent(block, player, block.getDrops(new ItemStack(inHand.getType())).stream().toList());
+            drops = triggerBlockDropItemEvent(block, player,
+                    new ArrayList<>(block.getDrops(new ItemStack(inHand.getType()))));
             applySilkTouch(drops, inHand, block);
             applyFortune(drops, inHand);
         }
@@ -567,7 +569,7 @@ public class AutoPickupEventsListener implements Listener, EventExecutor {
         }
         BlockDropItemEvent blockDropItemEvent = new BlockDropItemEvent(block, block.getState(), player, items);
         Bukkit.getPluginManager().callEvent(blockDropItemEvent);
-        return blockDropItemEvent.getItems().stream().map(Item::getItemStack).toList();
+        return blockDropItemEvent.getItems().stream().map(Item::getItemStack).collect(Collectors.toList());
     }
 
     @Override

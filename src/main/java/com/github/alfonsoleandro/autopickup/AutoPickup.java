@@ -56,13 +56,13 @@ public class AutoPickup extends ReloaderPlugin {
         this.messageSender.send("Please consider subscribing to my yt channel: &c" + this.pdfFile.getWebsite());
         this.autoPickupManager = new AutoPickupManager(this);
         this.settings = new Settings(this);
-        this.messageSender.send("&fVKBackpacks "+(this.settings.isVkBackpacksSupport() ? "&aFound" : "&cNot found"));
-        this.messageSender.send("&fBetterBackpacks "+(this.settings.isBetterBackpacksSupport() ? "&aFound" : "&cNot found"));
         registerEvents();
         registerCommands();
         updateChecker();
         startMetrics();
         registerPAPIPlaceholder();
+        this.messageSender.send("&fVKBackpacks "+(this.settings.isVkBackpacksSupport() ? "&aFound" : "&cNot found"));
+        this.messageSender.send("&fBetterBackpacks "+(this.settings.isBetterBackpacksSupport() ? "&aFound" : "&cNot found"));
     }
 
     @Override
@@ -116,11 +116,11 @@ public class AutoPickup extends ReloaderPlugin {
     public void registerPAPIPlaceholder(){
         Plugin papi = getServer().getPluginManager().getPlugin("PlaceholderAPI");
         if(papi != null && papi.isEnabled()){
-            this.messageSender.send("&aPlaceholderAPI found, the placeholder has been registered successfully");
+            this.messageSender.send("&fPlaceholderAPI &aFound");
             this.papiExpansion = new PAPIPlaceholders(this);
             this.papiExpansion.register();
         }else{
-            this.messageSender.send("&cPlaceholderAPI not found, the placeholder was not registered");
+            this.messageSender.send("&fPlaceholderAPI &cNot found");
         }
     }
 
