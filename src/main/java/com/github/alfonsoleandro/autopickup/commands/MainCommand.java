@@ -154,7 +154,6 @@ public class MainCommand implements CommandExecutor {
                 this.changeSettings.disableSetting(settingToChange, playerToUse, true);
                 return true;
             }
-
             Player player = (Player) sender;
             this.changeSettings.disableSetting(settingToChange, player, false);
             return true;
