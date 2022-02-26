@@ -43,6 +43,27 @@ permissions:
   autoPickup.carefulSmelt:
     description: Allows a player to use carefulSmelt.
     default: op
+  autoPickup.autoPickup.blocks.others:
+    description: Allows a player to autopickup block drops.
+    default: op
+  autoPickup.autoPickup.mobs.others:
+    description: Allows a player to enable autopickup mob drops for another player.
+    default: op
+  autoPickup.autoPickup.exp.others:
+    description: Allows a player to enable autopickup experience orbs for another player.
+    default: op
+  autoPickup.autoSmelt.blocks.others:
+    description: Allows a player to enable autosmelt block drops for another player.
+    default: op
+  autoPickup.autoSmelt.mobs.others:
+    description: Allows a player to enable autosmelt for another player.
+    default: op
+  autoPickup.carefulBreak.others:
+    description: Allows a player to enable use carefulBreak for another player.
+    default: op
+  autoPickup.carefulSmelt.others:
+    description: Allows a player to enable use carefulSmelt for another player.
+    default: op
   autoPickup.autoPickup.*:
     description: Gives permission to every autoPickup type.
     default: op
@@ -66,3 +87,10 @@ permissions:
       autoPickup.autoSmelt.*: true
       autoPickup.carefulBreak: true
       autoPickup.carefulSmelt: true
+      autoPickup.autoPickup.blocks.others: true
+      autoPickup.autoPickup.mobs.others: true
+      autoPickup.autoPickup.exp.others: true
+      autoPickup.autoSmelt.blocks.others: true
+      autoPickup.autoSmelt.mobs.others: true
+      autoPickup.carefulBreak.others: true
+      autoPickup.carefulSmelt.others: true
