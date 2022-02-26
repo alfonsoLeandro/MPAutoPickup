@@ -4,7 +4,6 @@ import com.github.alfonsoleandro.autopickup.AutoPickup;
 import com.github.alfonsoleandro.autopickup.managers.AutoPickupSettings;
 import com.github.alfonsoleandro.mputils.managers.MessageSender;
 import org.bukkit.entity.Player;
-
 import java.util.Arrays;
 import java.util.List;
 

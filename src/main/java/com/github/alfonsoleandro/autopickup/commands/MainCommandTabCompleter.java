@@ -37,7 +37,6 @@ public class MainCommandTabCompleter implements TabCompleter {
 
             } else if(equalsToStrings(args[0], "reload")) {
                 list.add("reload");
-
             } else if(equalsToStrings(args[0], "toggle")) {
                 list.add("toggle");
             } else if(equalsToStrings(args[0], "enable")){

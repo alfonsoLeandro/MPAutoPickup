@@ -139,7 +139,6 @@ public class MainCommand implements CommandExecutor {
 
             //if setting doesn't exist
             String settingToChange = args[1];
-
             if (!changeSettings.settingExists(settingToChange)) {
                 this.messageSender.send(sender, "&cUnknown setting, check the Spigot's page for help.");
                 return true;
