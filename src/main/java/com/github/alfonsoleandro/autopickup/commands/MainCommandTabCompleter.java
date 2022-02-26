@@ -26,6 +26,8 @@ public class MainCommandTabCompleter implements TabCompleter {
                 list.add("version");
                 list.add("reload");
                 list.add("toggle");
+                list.add("enable");
+                list.add("disable");
 
             } else if(equalsToStrings(args[0], "help")) {
                 list.add("help");
@@ -38,6 +40,10 @@ public class MainCommandTabCompleter implements TabCompleter {
 
             } else if(equalsToStrings(args[0], "toggle")) {
                 list.add("toggle");
+            } else if(equalsToStrings(args[0], "enable")){
+                list.add("enable");
+            } else if(equalsToStrings(args[0], "disable")){
+                list.add("disable");
             }
 
         }
