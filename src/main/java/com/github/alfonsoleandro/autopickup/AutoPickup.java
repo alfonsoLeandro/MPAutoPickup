@@ -33,7 +33,7 @@ import java.util.Map;
 public class AutoPickup extends ReloaderPlugin {
 
     private final char color = '2';
-    //Ex: 1.8.9 ->  8 = discriminant
+    //Ex: 1.8.9 ->  8 = discriminant TODO: REMOVE "-RO..."
     private final int serverVersionDiscriminant = Integer.parseInt(
             getServer().getBukkitVersion().split("\\.")[1].split("-")[0]);
     private final PluginDescriptionFile pdfFile = getDescription();
@@ -215,7 +215,7 @@ public class AutoPickup extends ReloaderPlugin {
         FileConfiguration actualConfig = YamlConfiguration.loadConfiguration(new File(this.getDataFolder(), "config.yml"));
         FileConfiguration config = getConfig();
 
-        Map<String, Object> fields = new HashMap<>(){{
+        Map<String, Object> fields = new HashMap<String, Object>(){{
             put("config.BetterBackpacks support", true);
             put("config.careful break", true);
             put("config.careful smelt", true);

@@ -47,7 +47,7 @@ public class BetterBackpacksListener implements Listener {
                 if(((BackpackHolder)holder).getType() != 3) return;
 
                 List<Entity> items = player.getNearbyEntities(1.1, 1.1, 1.1).stream()
-                        .filter(e -> e instanceof Item).toList();
+                        .filter(e -> e instanceof Item).collect(Collectors.toList());
 
                 for(Entity entity : items){
                     Item item = (Item)entity;

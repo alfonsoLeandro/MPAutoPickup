@@ -48,34 +48,35 @@ public class ChangeSettings {
         if(notHasPermission(SettingType.getByString(setting), player, forOther)) return;
 
         switch (setting) {
-            case "block-auto-pickup" -> {
+            case "block-auto-pickup":
                 playerSettings.setAutoPickupBlocks(true);
                 this.messageSender.send(player, Message.AP_BLOCKS_ENABLED);
-            }
-            case "mob-auto-pickup" -> {
+                break;
+
+            case "mob-auto-pickup":
                 playerSettings.setAutoPickupMobDrops(true);
                 this.messageSender.send(player, Message.AP_MOB_ENABLED);
-            }
-            case "exp-auto-pickup" -> {
+                break;
+            case "exp-auto-pickup":
                 playerSettings.setAutoPickupExp(true);
                 this.messageSender.send(player, Message.AP_EXP_ENABLED);
-            }
-            case "block-auto-smelt" -> {
+                break;
+            case "block-auto-smelt":
                 playerSettings.setAutoSmeltBlocks(true);
                 this.messageSender.send(player, Message.AS_BLOCKS_ENABLED);
-            }
-            case "mob-auto-smelt" -> {
+                break;
+            case "mob-auto-smelt":
                 playerSettings.setAutoSmeltMobs(true);
                 this.messageSender.send(player, Message.AS_MOB_ENABLED);
-            }
-            case "careful-break" -> {
+                break;
+            case "careful-break":
                 playerSettings.setCarefulBreak(true);
                 this.messageSender.send(player, Message.CAREFUL_BREAK_ENABLED);
-            }
-            case "careful-smelt" -> {
+                break;
+            case "careful-smelt":
                 playerSettings.setCarefulSmelt(true);
                 this.messageSender.send(player, Message.CAREFUL_SMELT_ENABLED);
-            }
+                break;
         }
     }
 
@@ -84,34 +85,34 @@ public class ChangeSettings {
         if(notHasPermission(SettingType.getByString(setting), player, forOther)) return;
 
         switch (setting) {
-            case "block-auto-pickup" -> {
+            case "block-auto-pickup":
                 playerSettings.setAutoPickupBlocks(false);
                 this.messageSender.send(player, Message.AP_BLOCKS_DISABLED);
-            }
-            case "mob-auto-pickup" -> {
+                break;
+            case "mob-auto-pickup":
                 playerSettings.setAutoPickupMobDrops(false);
                 this.messageSender.send(player, Message.AP_MOB_DISABLED);
-            }
-            case "exp-auto-pickup" -> {
+                break;
+            case "exp-auto-pickup":
                 playerSettings.setAutoPickupExp(false);
                 this.messageSender.send(player, Message.AP_EXP_DISABLED);
-            }
-            case "block-auto-smelt" -> {
+                break;
+            case "block-auto-smelt":
                 playerSettings.setAutoSmeltBlocks(false);
                 this.messageSender.send(player, Message.AS_BLOCKS_DISABLED);
-            }
-            case "mob-auto-smelt" -> {
+                break;
+            case "mob-auto-smelt":
                 playerSettings.setAutoSmeltMobs(false);
                 this.messageSender.send(player, Message.AS_MOB_DISABLED);
-            }
-            case "careful-break" -> {
+                break;
+            case "careful-break":
                 playerSettings.setCarefulBreak(false);
                 this.messageSender.send(player, Message.CAREFUL_BREAK_DISABLED);
-            }
-            case "careful-smelt" -> {
+                break;
+            case "careful-smelt":
                 playerSettings.setCarefulSmelt(false);
                 this.messageSender.send(player, Message.CAREFUL_SMELT_DISABLED);
-            }
+                break;
         }
     }
 
@@ -120,41 +121,41 @@ public class ChangeSettings {
         if(notHasPermission(SettingType.getByString(setting), player, forOther)) return;
 
         switch (setting) {
-            case "block-auto-pickup" -> {
+            case "block-auto-pickup":
                 boolean wasEnabled = playerSettings.autoPickupBlocksEnabled();
                 playerSettings.setAutoPickupBlocks(!wasEnabled);
                 this.messageSender.send(player, wasEnabled ? Message.AP_BLOCKS_DISABLED : Message.AP_BLOCKS_ENABLED);
-            }
-            case "mob-auto-pickup" -> {
-                boolean wasEnabled = playerSettings.autoPickupMobDropsEnabled();
-                playerSettings.setAutoPickupMobDrops(!wasEnabled);
-                this.messageSender.send(player, wasEnabled ? Message.AP_MOB_DISABLED : Message.AP_MOB_ENABLED);
-            }
-            case "exp-auto-pickup" -> {
-                boolean wasEnabled = playerSettings.autoPickupExpEnabled();
-                playerSettings.setAutoPickupExp(!wasEnabled);
-                this.messageSender.send(player, wasEnabled ? Message.AP_EXP_DISABLED : Message.AP_EXP_ENABLED);
-            }
-            case "block-auto-smelt" -> {
-                boolean wasEnabled = playerSettings.autoSmeltBlocksEnabled();
-                playerSettings.setAutoSmeltBlocks(!wasEnabled);
-                this.messageSender.send(player, wasEnabled ? Message.AS_BLOCKS_DISABLED : Message.AS_BLOCKS_ENABLED);
-            }
-            case "mob-auto-smelt" -> {
-                boolean wasEnabled = playerSettings.autoSmeltMobEnabled();
-                playerSettings.setAutoSmeltMobs(!wasEnabled);
-                this.messageSender.send(player, wasEnabled ? Message.AS_MOB_DISABLED : Message.AS_MOB_ENABLED);
-            }
-            case "careful-break" -> {
-                boolean wasEnabled = playerSettings.carefulBreakEnabled();
-                playerSettings.setCarefulBreak(!wasEnabled);
-                this.messageSender.send(player, wasEnabled ? Message.CAREFUL_BREAK_DISABLED : Message.CAREFUL_BREAK_ENABLED);
-            }
-            case "careful-smelt" -> {
-                boolean wasEnabled = playerSettings.carefulSmeltEnabled();
-                playerSettings.setCarefulSmelt(!wasEnabled);
-                this.messageSender.send(player, wasEnabled ? Message.CAREFUL_SMELT_DISABLED : Message.CAREFUL_SMELT_ENABLED);
-            }
+                break;
+            case "mob-auto-pickup":
+                boolean wasEnabledAP = playerSettings.autoPickupMobDropsEnabled();
+                playerSettings.setAutoPickupMobDrops(!wasEnabledAP);
+                this.messageSender.send(player, wasEnabledAP ? Message.AP_MOB_DISABLED : Message.AP_MOB_ENABLED);
+                break;
+            case "exp-auto-pickup":
+                boolean wasEnabledEXP = playerSettings.autoPickupExpEnabled();
+                playerSettings.setAutoPickupExp(!wasEnabledEXP);
+                this.messageSender.send(player, wasEnabledEXP ? Message.AP_EXP_DISABLED : Message.AP_EXP_ENABLED);
+                break;
+            case "block-auto-smelt":
+                boolean wasEnabledAS = playerSettings.autoSmeltBlocksEnabled();
+                playerSettings.setAutoSmeltBlocks(!wasEnabledAS);
+                this.messageSender.send(player, wasEnabledAS ? Message.AS_BLOCKS_DISABLED : Message.AS_BLOCKS_ENABLED);
+                break;
+            case "mob-auto-smelt":
+                boolean wasEnabledMAS = playerSettings.autoSmeltMobEnabled();
+                playerSettings.setAutoSmeltMobs(!wasEnabledMAS);
+                this.messageSender.send(player, wasEnabledMAS ? Message.AS_MOB_DISABLED : Message.AS_MOB_ENABLED);
+                break;
+            case "careful-break":
+                boolean wasEnabledCB = playerSettings.carefulBreakEnabled();
+                playerSettings.setCarefulBreak(!wasEnabledCB);
+                this.messageSender.send(player, wasEnabledCB ? Message.CAREFUL_BREAK_DISABLED : Message.CAREFUL_BREAK_ENABLED);
+                break;
+            case "careful-smelt":
+                boolean wasEnabledCS = playerSettings.carefulSmeltEnabled();
+                playerSettings.setCarefulSmelt(!wasEnabledCS);
+                this.messageSender.send(player, wasEnabledCS ? Message.CAREFUL_SMELT_DISABLED : Message.CAREFUL_SMELT_ENABLED);
+                break;
         }
     }
 
@@ -167,12 +168,12 @@ public class ChangeSettings {
         MOB_AUTO_SMELT("autoSmelt.mobs"),
         CAREFUL_BREAK("carefulBreak"),
         CAREFUL_SMELT("carefulSmelt");
-        
-        
+
+
         private final String permNode;
-        
+
         SettingType(String permNode){
-            this.permNode = permNode;    
+            this.permNode = permNode;
         }
 
         public String getPermNode() {
@@ -180,16 +181,16 @@ public class ChangeSettings {
         }
 
         public static SettingType getByString(String settingType){
-            return switch (settingType.toLowerCase(Locale.ROOT)) {
-                case "block-auto-pickup" -> BLOCK_AUTO_PICKUP;
-                case "mob-auto-pickup" -> MOB_AUTO_PICKUP;
-                case "exp-auto-pickup" -> EXP_AUTO_PICKUP;
-                case "block-auto-smelt" -> BLOCK_AUTO_SMELT;
-                case "mob-auto-smelt" -> MOB_AUTO_SMELT;
-                case "careful-break" -> CAREFUL_BREAK;
-                case "careful-smelt" -> CAREFUL_SMELT;
-                default -> null;
-            };
+            switch (settingType.toLowerCase(Locale.ROOT)) {
+                case "block-auto-pickup": return BLOCK_AUTO_PICKUP;
+                case "mob-auto-pickup": return MOB_AUTO_PICKUP;
+                case "exp-auto-pickup": return EXP_AUTO_PICKUP;
+                case "block-auto-smelt": return BLOCK_AUTO_SMELT;
+                case "mob-auto-smelt": return MOB_AUTO_SMELT;
+                case "careful-break": return CAREFUL_BREAK;
+                case "careful-smelt": return CAREFUL_SMELT;
+                default: return null;
+            }
         }
     }
 }

@@ -101,7 +101,7 @@ public class AutoPickupEventsListener implements Listener, EventExecutor {
         //Check if block has items in it.
         if(block.getState() instanceof InventoryHolder && !(block.getType().toString().contains("SHULKER"))) {
             Inventory blockInv = ((InventoryHolder) block.getState()).getInventory();
-            drops.addAll(Arrays.stream(blockInv.getContents()).filter(Objects::nonNull).toList());
+            drops.addAll(Arrays.stream(blockInv.getContents()).filter(Objects::nonNull).collect(Collectors.toList()));
             blockInv.clear();
             block.getState().update();
         }
