@@ -3,6 +3,9 @@ package com.github.alfonsoleandro.autopickup;
 import com.github.alfonsoleandro.autopickup.commands.MainCommand;
 import com.github.alfonsoleandro.autopickup.commands.MainCommandTabCompleter;
 import com.github.alfonsoleandro.autopickup.listeners.*;
+import com.github.alfonsoleandro.autopickup.listeners.autopickup.AbstractAutoPickupEventsListener;
+import com.github.alfonsoleandro.autopickup.listeners.autopickup.AutoPickupEventsListener;
+import com.github.alfonsoleandro.autopickup.listeners.autopickup.AutoPickupEventsListenerLegacy;
 import com.github.alfonsoleandro.autopickup.managers.AutoPickupManager;
 import com.github.alfonsoleandro.autopickup.utils.Message;
 import com.github.alfonsoleandro.autopickup.utils.PAPIPlaceholders;
@@ -290,7 +293,10 @@ public class AutoPickup extends ReloaderPlugin {
         if(Bukkit.getPluginManager().isPluginEnabled("BetterBackpacks"))
             pm.registerEvents(new BetterBackpacksListener(this), this);
 
-        AutoPickupEventsListener listeners = new AutoPickupEventsListener(this, this.serverVersionDiscriminant);
+        AbstractAutoPickupEventsListener listeners = this.serverVersionDiscriminant > 12 ?
+                new AutoPickupEventsListener(this, this.serverVersionDiscriminant)
+                :
+                new AutoPickupEventsListenerLegacy(this, this.serverVersionDiscriminant);
         String[] priorities = new String[]{"LOWEST", "LOW", "NORMAL", "HIGH", "HIGHEST"};
         String blockBreakPriority = Arrays.stream(priorities).anyMatch(
                 k -> k.equalsIgnoreCase(this.configYaml.getAccess().getString("config.event priorities.block break")))

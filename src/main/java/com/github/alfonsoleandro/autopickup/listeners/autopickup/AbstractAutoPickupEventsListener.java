@@ -1,4 +1,4 @@
-package com.github.alfonsoleandro.autopickup.listeners;
+package com.github.alfonsoleandro.autopickup.listeners.autopickup;
 
 import com.github.alfonsoleandro.autopickup.AutoPickup;
 import com.github.alfonsoleandro.autopickup.managers.AutoPickupManager;
@@ -17,7 +17,10 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
-import org.bukkit.event.*;
+import org.bukkit.event.Event;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
@@ -34,7 +37,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class AutoPickupEventsListener implements Listener, EventExecutor {
+public abstract class AbstractAutoPickupEventsListener implements Listener, EventExecutor {
 
     private final Random r = new Random();
     private final Set<String> alertedPlayers = new HashSet<>();
@@ -47,7 +50,7 @@ public class AutoPickupEventsListener implements Listener, EventExecutor {
     private final int serverVersionDiscriminant;
 
 
-    public AutoPickupEventsListener(AutoPickup plugin, int serverVersionDiscriminant){
+    public AbstractAutoPickupEventsListener(AutoPickup plugin, int serverVersionDiscriminant){
         this.plugin = plugin;
         this.messageSender = plugin.getMessageSender();
         this.apm = plugin.getAutoPickupManager();
@@ -544,7 +547,7 @@ public class AutoPickupEventsListener implements Listener, EventExecutor {
         new BukkitRunnable(){
             @Override
             public void run(){
-                AutoPickupEventsListener.this.alertedPlayers.remove(playerName);
+                AbstractAutoPickupEventsListener.this.alertedPlayers.remove(playerName);
             }
         }.runTaskLater(this.plugin, this.settings.getTicksBeforeAlert());
     }
@@ -554,23 +557,13 @@ public class AutoPickupEventsListener implements Listener, EventExecutor {
     }
 
     /**
-     * Calls the {@link BlockDropItemEvent} that was going to be called by the {@link BlockBreakEvent} but wasn't,
+     * Calls the BlockDropItemEvent that was going to be called by the {@link BlockBreakEvent} but wasn't,
      * because the block break was cancelled, or items were not dropped.
      * @param block The block that caused the event.
      * @param player The player breaking the block.
      * @param drops The list of dropped items.
      */
-    private List<ItemStack> triggerBlockDropItemEvent(Block block, Player player, List<ItemStack> drops){
-        List<Item> items = new ArrayList<>();
-        for(ItemStack drop : drops){
-            Item dropped = block.getWorld().dropItem(block.getLocation(), drop);
-            dropped.remove();
-            items.add(dropped);
-        }
-        BlockDropItemEvent blockDropItemEvent = new BlockDropItemEvent(block, block.getState(), player, items);
-        Bukkit.getPluginManager().callEvent(blockDropItemEvent);
-        return blockDropItemEvent.getItems().stream().map(Item::getItemStack).collect(Collectors.toList());
-    }
+    protected abstract List<ItemStack> triggerBlockDropItemEvent(Block block, Player player, List<ItemStack> drops);
 
     @Override
     public void execute(@NotNull Listener listener, @NotNull Event event) {
